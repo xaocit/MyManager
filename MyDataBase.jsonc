@@ -1,0 +1,18 @@
+{
+    "transactions": [
+        {
+            "id": 9348,
+            "date": "2026-07-13",
+            "amount": 540,
+            "type": "expense",
+            "description": "Корм для кота"
+        },
+        {
+            "id": 9346,
+            "date": "2026-07-13",
+            "amount": 5400,
+            "type": "income",
+            "description": "Получил аванс на работе"
+        }
+    ]
+}
