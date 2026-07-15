@@ -1,15 +1,13 @@
+######
+###### Файл взаимодействия пользователя с прогарммой через консоль 
+######
+
+
 import sys
-import DataManager
-import Tasks
+import myServices
 
 ## Функция вывода 1-го меню
-def Menu1_1():
-
-    # Читаем базу данных и соханяем её перед использованием в программе
-    dataBase = DataManager.readingDataFromFile()  
-
-    ## Формируем список записей данных для удобства
-    listOfDataBase = [Tasks.StructDataOfTransactions(i["id"], i["date"], i["amount"], i["type"], i["description"]) for i in dataBase["transactions"]]
+def Menu1_1(listOfDataBase):
 
     print("Здравствуйте! Вы в менеджере ваших расходов и доходов. Что вы хотите сделать?", end="\n\n")
 
@@ -53,13 +51,14 @@ def Menu1_2(listOfDataBase):
     match myChoice2:
 
         case 1:
-            pprintDataForward(listOfDataBase, 1)
+            pprintData(listOfDataBase, 1)
             Menu1_2(listOfDataBase)
         case 2:
-            pprintDataForward(listOfDataBase, -1)
+            pprintData(listOfDataBase, -1)
             Menu1_2(listOfDataBase)
         case 3:
-            ...
+            pprintSortedData(listOfDataBase)
+            Menu1_2(listOfDataBase)
         case 4:
             sys.exit()
         case _:
@@ -68,7 +67,7 @@ def Menu1_2(listOfDataBase):
 
 
 ## Функция красивого вывода данных в прямом или обратном порядке
-def pprintDataForward(listOfDataBase, mode):
+def pprintData(listOfDataBase, mode):
 
     # Красивый вывод в виде таблицы
     print("-" * 80)
@@ -78,3 +77,19 @@ def pprintDataForward(listOfDataBase, mode):
         print(f"{item.IdTransaction:<5} {item.Date:<12} {item.Amount:<10.2f} {item.TypeOfOperation:<15} {item.Description}")
     print("-" * 80)
 
+
+## Функция вывода отсортированного списка
+def pprintSortedData(listOfDataBase):
+
+    print("""Введите 1 цифру или последовательность цифр, 
+которые будут указывать сколько полей и в каком порядке отсортировать (Например,
+"1 4 3" означает, что сортируем по 1-му полю, если значения совпадают, то
+затем сортируем по 4-му полю, если и они совпадают, то по 3-му полю сортируем): """, end="\n\n")
+    
+    # Получаем номера полей от пользователя
+    masForSorting = list(map(int, input().split()))
+    print()
+    
+    result = myServices.getSortedData(listOfDataBase, masForSorting)
+
+    pprintData(result, 1)
