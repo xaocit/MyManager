@@ -2,6 +2,8 @@
 ###### Файл с логикой действий проекта
 ######
 
+import myStructs
+import DataManager
 
 # Функция получения отсортированного списка на основе 
 # настроек критериев этой сортировки пользователем
@@ -26,3 +28,54 @@ def getSortedData(listOfDataBase, masForSorting):
         return tuple(getattr(item, field) for field in fields_for_sorting)
     
     return sorted(listOfDataBase, key=makeSortKey)
+
+
+# Функция добавления новой записи в бд
+def appendData(listOfDataBase, myNewData):
+
+    newDate, newAmount, newTypeOfOperation, newDescription = (myNewData[i] for i in range(0, 4))
+
+    listOfDataBase.append(myStructs.StructDataOfTransactions(5435, newDate, newAmount, newTypeOfOperation, newDescription))
+
+    # Форматируем данные, переводя из вида списка в словарь, для последующей записи данных в файл
+    dbFormatted = formateFromListToDb(listOfDataBase)
+
+    # Перезаписываем данные в файлике
+    DataManager.writeDataToFile(dbFormatted)
+
+
+# Функция изменения записи в бд
+def changeData(listOfDataBase, id, myNewData):
+
+    ...
+
+
+# Функция удаления записи из бд
+def removeData(listOfDataBase, id):
+
+    ...
+
+# Функция переделывания из формата файла .jsonc в список структур
+## Формируем список записей данных для удобства
+def formateFromDbToList(dataBase):
+    listOfDataBase = [myStructs.StructDataOfTransactions(i["id"], i["date"], i["amount"], i["type"], i["description"]) for i in dataBase["transactions"]]
+    return listOfDataBase
+
+# Функция переделывания из списка структур в формат файла .jsonc
+## Формируем список записей данных для удобства
+def formateFromListToDb(listOfDataBase):
+    
+    dataBase = {"transactions": []}
+
+    for i in listOfDataBase:
+        dataBase["transactions"].append(
+            {
+                "id": i.IdTransaction,
+                "date": i.Date,
+                "amount": i.Amount,
+                "type": i.TypeOfOperation,
+                "description": i.Description
+            }
+        )
+
+    return dataBase
