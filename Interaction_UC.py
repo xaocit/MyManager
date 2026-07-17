@@ -25,7 +25,7 @@ def Menu1_1(listOfDataBase):
         case 1:
             Menu1_2(listOfDataBase)
         case 2:
-            ...
+            Menu2_1(listOfDataBase)
         case 3:
             sys.exit()
         case _:
@@ -60,7 +60,7 @@ def Menu1_2(listOfDataBase):
             pprintSortedData(listOfDataBase)
             Menu1_2(listOfDataBase)
         case 4:
-            sys.exit()
+            Menu1_1(listOfDataBase)
         case _:
             print("Попробуйте ещё раз!!!", end="\n\n")
             Menu1_2(listOfDataBase)
@@ -74,7 +74,7 @@ def pprintData(listOfDataBase, mode):
     print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
     print("-" * 80)
     for item in listOfDataBase[::mode]:
-        print(f"{item.IdTransaction:<5} {item.Date:<12} {item.Amount:<10.2f} {item.TypeOfOperation:<15} {item.Description}")
+        print(f"{item.IdTransaction:<5} {item.Date:<12} {float(item.Amount):<10.2f} {item.TypeOfOperation:<15} {item.Description}")
     print("-" * 80)
 
 
@@ -93,3 +93,53 @@ def pprintSortedData(listOfDataBase):
     result = myServices.getSortedData(listOfDataBase, masForSorting)
 
     pprintData(result, 1)
+
+
+## Функция вывода меню с выбором изменения данных
+def Menu2_1(listOfDataBase):
+
+    print()
+
+    print()
+
+    print("Добавить новую запись в бд - 1")
+    print("Изменить существующую запись в бд - 2")
+    print("Удалить запись из бд - 3")
+    print("Выйти - 4", end="\n\n")
+
+    myChoice3 = int(input("Сделайте выбор: "))
+    print()
+
+    match myChoice3:
+
+        case 1:
+            getDataForAppend(listOfDataBase)
+            Menu2_1(listOfDataBase)
+        case 2:
+            myServices.changeData(listOfDataBase)
+            Menu2_1(listOfDataBase)
+        case 3:
+            myServices.removeData(listOfDataBase)
+            Menu2_1(listOfDataBase)
+        case 4:
+            Menu1_1(listOfDataBase)
+        case _:
+            print("Попробуйте ещё раз!!!", end="\n\n")
+            Menu2_1()
+
+
+## Функция запроса данных у пользователя для добавления
+def getDataForAppend(listOfDataBase):
+
+    print()
+    print()
+
+    print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
+
+    print()
+
+    myNewDataInBD = input().split(None, 3)
+    print()
+
+
+    myServices.appendData(listOfDataBase, myNewDataInBD)
