@@ -4,7 +4,7 @@
 
 
 import sys
-import myServices
+import backup.myServices as myServices
 
 ## Функция вывода 1-го меню
 def Menu1_1(listOfDataBase):

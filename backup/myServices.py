@@ -2,8 +2,8 @@
 ###### Файл с логикой действий проекта
 ######
 
-import myStructs
-import DataManager
+import backup.myStructs as myStructs
+import backup.DataManager as DataManager
 
 # Функция получения отсортированного списка на основе 
 # настроек критериев этой сортировки пользователем
