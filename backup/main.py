@@ -4,10 +4,10 @@
 
 
 ### Импорты файлов
-import Interaction_UC
-import DataManager
-import myStructs
-import myServices
+import backup.Interaction_UC as Interaction_UC
+import backup.DataManager as DataManager
+import backup.myStructs as myStructs
+import backup.myServices as myServices
 
 
 if __name__ == "__main__":
