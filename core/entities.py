@@ -9,7 +9,7 @@ class StructDataOfTransaction:
 
     # Поля структуры (класса)
 
-    id: str  # Уникальный ID транзакции
+    id: int  # Уникальный ID транзакции
     date: str  # Дата транзакции
     amount: float  # Сумма транзакции
     typeOp: str  # Тип операции - доход/расход

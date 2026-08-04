@@ -1,0 +1,18 @@
+{
+    "transactions": [
+        {
+            "id": 1,
+            "date": "04.08.2026",
+            "amount": "5444",
+            "type": "income",
+            "description": "Стипендия за Июль"
+        },
+        {
+            "id": 2,
+            "date": "03.08.2026",
+            "amount": "560",
+            "type": "expense",
+            "description": "Покупка ведра в туалет "
+        }
+    ]
+}

@@ -4,6 +4,8 @@
 # Импорты
 
 import json, commentjson, pathlib
+from typing import List
+
 from core.interfaces import IRepository, IDataFormatter
 from core.entities import StructDataOfTransaction
 
@@ -11,7 +13,7 @@ from core.entities import StructDataOfTransaction
 class JsonFormatter(IDataFormatter):
 
     # Преобразование словаря из JSON в список Transaction
-    def from_dict(data: dict) -> List[StructDataOfTransaction]:
+    def from_dict(self, data: dict) -> List[StructDataOfTransaction]:
 
         transactions_data = data.get("transactions", [])
 
@@ -19,7 +21,7 @@ class JsonFormatter(IDataFormatter):
 
 
     # Преобразование списка в словарь для JSON
-    def to_dict(transactions: List[StructDataOfTransaction]) -> dict:
+    def to_dict(self, transactions: List[StructDataOfTransaction]) -> dict:
 
         return {
             "transactions" : [
@@ -56,8 +58,9 @@ class JsonRepository(IRepository):
             return self.formatter.from_dict(data)
 
         ## Какие-то исключения
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"!!! Неизвестная ошибка: {e}")
+            return []  # ✅ Всегда возвращаем список
 
 
     # Сохранение транзакций в JSON файле
@@ -94,7 +97,7 @@ class JsonRepository(IRepository):
     # Метод удаления транзакции
     def delete(self, transaction_id: int) -> bool:
 
-        transactions = self.save_all()
+        transactions = self.load_all()
 
         for i, t in enumerate(transactions):
             if t.id == transaction_id:
