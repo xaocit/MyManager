@@ -26,15 +26,13 @@ project/
 │
 ├── services/                      # Бизнес-логика и утилиты
 │   ├── data_service.py           # Логика работы с данными (из myServices)
-│   └── ui_service.py             # Логика UI (из Interaction_UC)
 │
 ├── ui/                           # Пользовательский интерфейс
-│   └── console_ui.py             # Консольное меню (выделено из Interaction_UC)
+│   └── ui_service.py             # Консольное меню (выделено из Interaction_UC)
 │
-├── main.py                       # Точка входа + DI (сборка зависимостей)
-└── config.py                     # Конфигурация (новый файл)
+|
+|-- config.py                     # Конфигурация (новый файл)
+|-- main.py                       # Точка входа + DI (сборка зависимостей)
+|-- MyDataBase.jsonc
 
 
-
- ## В файлике Tasks.py определим класс (структуру) данных базы,
- ## который будет забирать данные из файла DataManager.py 
