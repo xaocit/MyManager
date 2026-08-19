@@ -11,7 +11,7 @@ class ConsoleUI:
 
 
     ## Функция вывода 1-го меню
-    def _menu_main(self, data):
+    def _menu_main(self):
 
         print("Здравствуйте! Вы в менеджере ваших расходов и доходов. Что вы хотите сделать?", end="\n\n")
 
@@ -27,19 +27,19 @@ class ConsoleUI:
         match myChoice1:
 
             case 1:
-                self._menu_view(data)
+                self._menu_view()
             case 2:
-                self._menu_edit(data)
+                self._menu_edit()
             case 3:
                 sys.exit()
             case _:
                 print("Попробуйте ещё раз!!!", end="\n\n")
-                self._menu_main(data)
+                self._menu_main()
 
 
 
     ## Функция вывода 2-го меню со способами вывода информации
-    def _menu_view(self, data):
+    def _menu_view(self):
         print()
 
         print()
@@ -55,22 +55,22 @@ class ConsoleUI:
         match myChoice2:
 
             case 1:
-                self._display_transactions(data, 1)
-                self._menu_view(data)
+                self._display_transactions(1)
+                self._menu_view()
             case 2:
-                self._display_transactions(data, -1)
-                self._menu_view(data)
+                self._display_transactions(-1)
+                self._menu_view()
             case 3:
                 self._menu_sort()
-                self._menu_view(data)
+                self._menu_view()
             case 4:
-                self._menu_main(data)
+                self._menu_main()
             case _:
                 print("Попробуйте ещё раз!!!", end="\n\n")
-                self._menu_view(data)
+                self._menu_view()
 
     ## Функция вывода меню с выбором изменения данных
-    def _menu_edit(self, data):
+    def _menu_edit(self):
 
         print()
 
@@ -88,21 +88,21 @@ class ConsoleUI:
 
             case 1:
                 self._menu_add()
-                self._menu_edit(data)
+                self._menu_edit()
             case 2:
                 #self._menu_update(data)
-                self._menu_edit(data)
+                self._menu_edit()
             case 3:
                 #self._menu_delete(data)
-                self._menu_edit(data)
+                self._menu_edit()
             case 4:
-                self._menu_main(data)
+                self._menu_main()
             case _:
                 print("Попробуйте ещё раз!!!", end="\n\n")
-                self._menu_edit(data)
+                self._menu_edit()
 
     ## Функция красивого вывода данных в прямом или обратном порядке
-    def _display_transactions(self, data, mode):
+    def _display_transactions(self, mode):
 
         # Красивый вывод в виде таблицы
         print("-" * 80)

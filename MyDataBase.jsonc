@@ -13,6 +13,13 @@
             "amount": "560",
             "type": "expense",
             "description": "Покупка ведра в туалет "
+        },
+        {
+            "id": 3,
+            "date": "18.08.2026",
+            "amount": "540",
+            "type": "expense",
+            "description": "Купил что-то"
         }
     ]
 }
