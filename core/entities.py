@@ -24,7 +24,7 @@ class StructDataOfTransaction:
             id=data['id'],
             date=data['date'],
             amount=data['amount'],
-            type=data['type'],
+            typeOp=data['type'],
             description=data['description']
         )
 
