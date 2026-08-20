@@ -55,10 +55,10 @@ class ConsoleUI:
         match myChoice2:
 
             case 1:
-                self._display_transactions(1)
+                self._display_transactions(self.service.get_all())
                 self._menu_view()
             case 2:
-                self._display_transactions(-1)
+                self._display_transactions(self.service.get_all(reverse=True))
                 self._menu_view()
             case 3:
                 self._menu_sort()
@@ -102,13 +102,13 @@ class ConsoleUI:
                 self._menu_edit()
 
     ## Функция красивого вывода данных в прямом или обратном порядке
-    def _display_transactions(self, mode):
+    def _display_transactions(self, list_for_display):
 
         # Красивый вывод в виде таблицы
         print("-" * 80)
         print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
         print("-" * 80)
-        for item in self.service._transactions[::mode]:
+        for item in list_for_display:
             print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
         print("-" * 80)
 
@@ -125,10 +125,10 @@ class ConsoleUI:
         masForSorting = list(map(int, input().split()))
         print()
 
-        if self.service._transactions != []:
+        if self.service.get_all() != []:
             result = self.service.get_sorted(masForSorting)
 
-            self._display_transactions(result, 1)
+            self._display_transactions(result)
 
         # Если файлик пуст, то не выполняем сортировку
         else:
@@ -152,4 +152,4 @@ class ConsoleUI:
 
     # Вызов главного меню
     def run(self):
-        self._menu_main(self.service.get_all())
+        self._menu_main()
