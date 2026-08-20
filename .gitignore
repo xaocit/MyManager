@@ -177,3 +177,7 @@ coverage.xml
 
 ## Мои файлы
 *.png
+*.jsonc
+*.json
+.gitignore
+
