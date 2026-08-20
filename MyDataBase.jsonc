@@ -20,6 +20,20 @@
             "amount": "540",
             "type": "expense",
             "description": "Купил что-то"
+        },
+        {
+            "id": 4,
+            "date": "20.08.2026",
+            "amount": "370",
+            "type": "expense",
+            "description": "Печатание фотографий (37 шт)"
+        },
+        {
+            "id": 5,
+            "date": "24.08.2026",
+            "amount": "600",
+            "type": "expense",
+            "description": "Мыло"
         }
     ]
 }
