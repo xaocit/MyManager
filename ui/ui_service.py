@@ -2,12 +2,15 @@
 
 import sys
 from services.data_service import TransactionService
+from services.data_input_validator import ValidatorOfInputData
 
 
 class ConsoleUI:
 
-    def __init__(self, service: TransactionService):
+    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
         self.service = service
+
+        self.validator = validator
 
 
     ## Функция вывода 1-го меню
@@ -144,10 +147,27 @@ class ConsoleUI:
 
         print()
 
-        myNewDataInBD = input().split(None, 3)
+        while True:
+
+            myNewDataInBD = input().split(None, 3)
+            new_date, new_amount, new_type, new_description = myNewDataInBD
+
+            result_validate = self.validator.is_correct_input(new_date, new_amount, new_type)
+
+            if isinstance(result_validate, list):
+                print()
+                print("Найдены ошибки в вводе: ", end="\n\n")
+                
+                for i in result_validate:
+                    print(i, end="\n\n")
+                print()
+                print("Попробуйте ещё раз ввести строку: ", end="\n\n")
+            else:
+                break
+
         print()
 
-        self.service.add(myNewDataInBD[0], myNewDataInBD[1], myNewDataInBD[2], myNewDataInBD[3])
+        self.service.add(new_date, new_amount, new_type, new_description)
 
 
     # Вызов главного меню
