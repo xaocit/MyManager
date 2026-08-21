@@ -34,6 +34,13 @@
             "amount": "600",
             "type": "expense",
             "description": "Мыло"
+        },
+        {
+            "id": 6,
+            "date": "21.08.2026",
+            "amount": "500",
+            "type": "income",
+            "description": "Убрал на даче - получил прибыль"
         }
     ]
 }

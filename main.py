@@ -3,6 +3,7 @@
 from infrastructure.data_manager import JsonRepository, JsonFormatter
 
 from services.data_service import TransactionService, TransactionSorter
+from services.data_input_validator import ValidatorOfInputData
 
 from ui.ui_service import ConsoleUI
 
@@ -18,7 +19,9 @@ def main():
 
     service = TransactionService(repository, sorter)
 
-    ui = ConsoleUI(service)
+    validator = ValidatorOfInputData()
+
+    ui = ConsoleUI(service, validator)
 
     ui.run()
 
