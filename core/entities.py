@@ -4,8 +4,9 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-## Описываем структуру полей данных
 class StructDataOfTransaction:
+    """Класс, описывающий, какие данные хранятся в каждой строке бд
+    и предоставляющий методы для преобразования словаря в объект данных, и наоборот"""
 
     # Поля структуры (класса)
 
@@ -15,11 +16,9 @@ class StructDataOfTransaction:
     typeOp: str  # Тип операции - доход/расход
     description: str  # Заметка об операции
 
-    # Методы 
-
-    # Создание объекта из словаря
     @classmethod
     def from_dict(cls, data: dict) -> StructDataOfTransaction:
+        """Создание объекта тек. класса из словаря"""
         return cls(
             id=data['id'],
             date=data['date'],
@@ -28,8 +27,8 @@ class StructDataOfTransaction:
             description=data['description']
         )
 
-    # Преобразование объекта в словарь
     def to_dict(self) -> dict:
+        """Преобразование объекта в словарь"""
         return {
             "id": self.id,
             "date": self.date,

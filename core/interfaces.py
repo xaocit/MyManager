@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 class IRepository(ABC):
+    """Абстрактный класс, интерфейс репозитория"""
 
     @abstractmethod
     def load_all(self) -> List[StructDataOfTransaction]:
@@ -15,6 +16,7 @@ class IRepository(ABC):
 
 
 class IDataFormatter(ABC):
+    """Абстрактный класс, интерфейс форматтера"""
 
     @abstractmethod
     def from_dict(self, data: dict) -> List[StructDataOfTransaction]:
@@ -26,6 +28,7 @@ class IDataFormatter(ABC):
 
 
 class ISorter(ABC):
+    """Абстрактный класс, интерфейс репозитория"""
 
     @abstractmethod
     def my_sort(self, data: List[StructDataOfTransaction], field_indices: List[int]) -> List[StructDataOfTransaction]:

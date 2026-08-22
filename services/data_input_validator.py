@@ -1,3 +1,5 @@
+### Файл с логикой валидации данных
+
 from typing import Union
 import re
 
@@ -43,7 +45,8 @@ class ValidateTypeOfOperation():
 
 
 class ValidatorOfInputData(ValidateDate, ValidateAmount, ValidateTypeOfOperation):
-    """Класс-сборщик предыдущих валидаторов"""
+    """Класс, реализующий пользовательскую валидацию для проверки вводимых данных, 
+    он же - класс-сборщик предыдущих валидаторов"""
 
     def is_correct_input(self, input_date: str, input_amount: str, input_operation: str) -> Union[list, bool]:
 
