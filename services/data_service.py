@@ -1,25 +1,23 @@
 ### Файл с утилитами для функций бд (сервисы)
 
 from core.entities import StructDataOfTransaction
-from core.interfaces import IRepository, ISorter
+from core.interfaces import IRepository, ISorter, ICreatorOfNewId
 
 class TransactionService:
     """Класс-сервис, реализующий публичный интерфейс для работы со списком транзакций"""
 
-    def __init__(self, repository: IRepository, sorter: List[ISorter] = None):
+    def __init__(self, repository: IRepository, creator_of_new_id: ICreatorOfNewId, sorter: List[ISorter] = None):
         self._transactions = repository.load_all()
 
         self.repository = repository
+        self.creator_of_new_id = creator_of_new_id
         self.sorter = sorter
 
     def add(self, new_date, new_amount, new_type_op, new_description) -> StructDataOfTransaction:
         """Логика добавления новой записи в бд"""
 
-        max_exist_id = 0
-        for i in self._transactions:
-            max_exist_id = max(max_exist_id, i.id)
-
-        new_id = max_exist_id + 1
+        # Определяем id для новой записи
+        new_id = self.creator_of_new_id.create_new_id(self._transactions)
 
         new_Transaction = StructDataOfTransaction(
             id=new_id,
@@ -53,6 +51,19 @@ class TransactionService:
 
         # Иначе возвращаем просто список транзакций
         return self._transactions
+
+class TransactionCreatorOfNewId(ICreatorOfNewId):
+    """Класс, реализующий метод формирования id для новой записи"""
+
+    def create_new_id(self, transactions: List[StructDataOfTransaction]) -> int:
+        """Метод, возвращающий свободный id для новой записи"""
+
+        max_exist_id = 0
+        for i in transactions:
+            max_exist_id = max(max_exist_id, i.id)
+
+        new_id = max_exist_id + 1
+        return new_id
 
 class TransactionSorter(ISorter):
     """Класс, реализующий кастомную сортировку"""
