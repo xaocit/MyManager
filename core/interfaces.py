@@ -28,9 +28,15 @@ class IDataFormatter(ABC):
 
 
 class ISorter(ABC):
-    """Абстрактный класс, интерфейс репозитория"""
+    """Абстрактный класс, интерфейс сортера"""
 
     @abstractmethod
     def my_sort(self, data: List[StructDataOfTransaction], field_indices: List[int]) -> List[StructDataOfTransaction]:
         pass
 
+class ICreatorOfNewId(ABC):
+    """Абстрактный класс, интерфейс логики формирования id для новой записи в бд"""
+
+    @abstractmethod
+    def create_new_id(self, transactions: List[StructDataOfTransaction]) -> int:
+        pass
