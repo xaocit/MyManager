@@ -1,9 +1,10 @@
-# Файл с функциями бд (сервисы)
+### Файл с утилитами для функций бд (сервисы)
 
 from core.entities import StructDataOfTransaction
 from core.interfaces import IRepository, ISorter
 
 class TransactionService:
+    """Класс-сервис, реализующий публичный интерфейс для работы со списком транзакций"""
 
     def __init__(self, repository: IRepository, sorter: List[ISorter] = None):
         self._transactions = repository.load_all()
@@ -12,6 +13,7 @@ class TransactionService:
         self.sorter = sorter
 
     def add(self, new_date, new_amount, new_type_op, new_description) -> StructDataOfTransaction:
+        """Логика добавления новой записи в бд"""
 
         max_exist_id = 0
         for i in self._transactions:
@@ -35,6 +37,7 @@ class TransactionService:
 
 
     def get_all(self, reverse=False) -> List[StructDataOfTransaction]:
+        """Публичный метод-геттер для доступа к копии списка транзакций (прямого или обратного)"""
 
         is_reverse_int = int(reverse)
 
@@ -42,15 +45,20 @@ class TransactionService:
 
 
     def get_sorted(self, field_indicies: List[int]) -> List[StructDataOfTransaction]:
+        """Публичный метод-геттер для доступа к отсортированному списку транзакций"""
 
+        # Если self.sorter имеется, то возвращаем отсортированный список
         if not (self.sorter is None):
             return self.sorter.my_sort(self._transactions, field_indicies)
 
+        # Иначе возвращаем просто список транзакций
         return self._transactions
 
 class TransactionSorter(ISorter):
+    """Класс, реализующий кастомную сортировку"""
 
     def my_sort(self, data, field_indicies):
+        """Метод, возвращающий отсортированный список по заданным полям"""
     
         # Получаем все атрибуты объекта (кроме служебных). 
         # dir() - возвращает все методы и поля объекта

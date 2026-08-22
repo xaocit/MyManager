@@ -9,19 +9,20 @@ from typing import List
 from core.interfaces import IRepository, IDataFormatter
 from core.entities import StructDataOfTransaction
 
-# Форматтер для преобразования данных
-class JsonFormatter(IDataFormatter):
+# Конец импортов
 
-    # Преобразование словаря из JSON в список Transaction
+class JsonFormatter(IDataFormatter):
+    """Класс форматирования списка из вида python в вид, характерный для .json - файла, и наоборот"""
+
     def from_dict(self, data: dict) -> List[StructDataOfTransaction]:
+        """Преобразование словаря из JSON в список Transaction"""
 
         transactions_data = data.get("transactions", [])
 
         return [StructDataOfTransaction.from_dict(item) for item in transactions_data]
 
-
-    # Преобразование списка в словарь для JSON
     def to_dict(self, transactions: List[StructDataOfTransaction]) -> dict:
+        """Преобразование списка в словарь для JSON"""
 
         return {
             "transactions" : [
@@ -29,10 +30,8 @@ class JsonFormatter(IDataFormatter):
             ]
         }
 
-
-
-# Репозиторий для работы с файлом JSON
 class JsonRepository(IRepository):
+    """Класс-репозиторий для оперирования со списком транзакций и файлом .json"""
 
     def __init__(self, file_path: str, formatter: IDataFormatter):
 
@@ -42,8 +41,9 @@ class JsonRepository(IRepository):
         # Убедимся, есть ли папка для файла
         self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Читает JSON
+    
     def load_all(self) -> List[StructDataOfTransaction]:
+        """Этот метод читает файлик бд и возвращает выгруженные транзакции в виде списка"""
 
         try:
             # Проверка наличия файла
@@ -62,9 +62,8 @@ class JsonRepository(IRepository):
             print(f"!!! Неизвестная ошибка: {e}")
             return []  # ✅ Всегда возвращаем список
 
-
-    # Сохранение транзакций в JSON файле
     def save_all(self, transactions: List[StructDataOfTransaction]) -> None:
+        """Сохранение транзакций в JSON файле"""
 
         try:
             # Преобразуем транзакции в словарь
@@ -83,9 +82,8 @@ class JsonRepository(IRepository):
         except Exception:
             pass
 
-
-    # Метод добавления транзакции
     def add(self, transaction: StructDataOfTransaction) -> None:
+        """Метод добавления транзакции в список и обновление файла этим списком с новой записью"""
 
         transactions = self.load_all()
 
@@ -93,9 +91,8 @@ class JsonRepository(IRepository):
 
         self.save_all(transactions)
 
-
-    # Метод удаления транзакции
     def delete(self, transaction_id: int) -> bool:
+        """Метод удаления транзакции из списка по её id и последующего обновления файла"""
 
         transactions = self.load_all()
 
@@ -109,8 +106,8 @@ class JsonRepository(IRepository):
 
         return False
 
-    # Изменить существующую транзакцию
     def update(self, transaction: StructDataOfTransaction) -> bool:
+        """Метод изменения транзакции в списке по её id и последующего обновления файла"""
 
         transactions = self.load_all()
 

@@ -1,20 +1,23 @@
-# Вспомогательная логика UI
+### Вспомогательная логика UI
+
+# Импорты
 
 import sys
 from services.data_service import TransactionService
 from services.data_input_validator import ValidatorOfInputData
 
+# Конец импортов
 
 class ConsoleUI:
+    """Класс с менюшками и методами, предназначенными для их работы"""
 
     def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
         self.service = service
 
         self.validator = validator
 
-
-    ## Функция вывода 1-го меню
     def _menu_main(self):
+        """Функция вывода 1-го меню"""
 
         print("Здравствуйте! Вы в менеджере ваших расходов и доходов. Что вы хотите сделать?", end="\n\n")
 
@@ -39,10 +42,8 @@ class ConsoleUI:
                 print("Попробуйте ещё раз!!!", end="\n\n")
                 self._menu_main()
 
-
-
-    ## Функция вывода 2-го меню со способами вывода информации
     def _menu_view(self):
+        """Функция вывода 2-го меню со способами вывода информации"""
         print()
 
         print()
@@ -72,8 +73,8 @@ class ConsoleUI:
                 print("Попробуйте ещё раз!!!", end="\n\n")
                 self._menu_view()
 
-    ## Функция вывода меню с выбором изменения данных
     def _menu_edit(self):
+        """Функция вывода меню с выбором изменения данных"""
 
         print()
 
@@ -104,8 +105,8 @@ class ConsoleUI:
                 print("Попробуйте ещё раз!!!", end="\n\n")
                 self._menu_edit()
 
-    ## Функция красивого вывода данных в прямом или обратном порядке
     def _display_transactions(self, list_for_display):
+        """Функция красивого вывода данных в прямом или обратном порядке"""
 
         # Красивый вывод в виде таблицы
         print("-" * 80)
@@ -115,9 +116,8 @@ class ConsoleUI:
             print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
         print("-" * 80)
 
-
-    ## Функция вывода отсортированного списка
     def _menu_sort(self):
+        """Функция вывода отсортированного списка"""
 
         print("""Введите 1 цифру или последовательность цифр, 
     которые будут указывать сколько полей и в каком порядке отсортировать (Например,
@@ -137,8 +137,8 @@ class ConsoleUI:
         else:
             print("НЕТ ДАННЫХ В ФАЙЛЕ ДЛЯ СОРТИРОВКИ!!!")
 
-    ## Функция запроса данных у пользователя для добавления
     def _menu_add(self):
+        """Функция запроса данных у пользователя для добавления"""
 
         print()
         print()
@@ -170,6 +170,6 @@ class ConsoleUI:
         self.service.add(new_date, new_amount, new_type, new_description)
 
 
-    # Вызов главного меню
     def run(self):
+        """Вызов главного меню"""
         self._menu_main()
