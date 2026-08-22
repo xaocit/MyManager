@@ -16,6 +16,8 @@ class ConsoleUI:
 
         self.validator = validator
 
+########  ОБЫЧНЫЕ МЕТОДЫ МЕНЮ  ########
+
     def _menu_main(self):
         """Функция вывода 1-го меню"""
 
@@ -94,7 +96,7 @@ class ConsoleUI:
                 self._menu_add()
                 self._menu_edit()
             case 2:
-                #self._menu_update(data)
+                self._menu_change()
                 self._menu_edit()
             case 3:
                 #self._menu_delete(data)
@@ -104,17 +106,6 @@ class ConsoleUI:
             case _:
                 print("Попробуйте ещё раз!!!", end="\n\n")
                 self._menu_edit()
-
-    def _display_transactions(self, list_for_display):
-        """Функция красивого вывода данных в прямом или обратном порядке"""
-
-        # Красивый вывод в виде таблицы
-        print("-" * 80)
-        print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
-        print("-" * 80)
-        for item in list_for_display:
-            print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
-        print("-" * 80)
 
     def _menu_sort(self):
         """Функция вывода отсортированного списка"""
@@ -136,6 +127,8 @@ class ConsoleUI:
         # Если файлик пуст, то не выполняем сортировку
         else:
             print("НЕТ ДАННЫХ В ФАЙЛЕ ДЛЯ СОРТИРОВКИ!!!")
+
+########  МЕТОДЫ CRUD-МЕНЮ  ########
 
     def _menu_add(self):
         """Функция запроса данных у пользователя для добавления"""
@@ -169,6 +162,59 @@ class ConsoleUI:
 
         self.service.add(new_date, new_amount, new_type, new_description)
 
+    def _menu_change(self):
+        """Функция запроса данных у пользователя для изменения существующей записи в бд"""
+
+        print()
+        print()
+
+        print()
+
+        print("Введите id записи, которую хотите изменить: ")
+
+        id_find = int(input())
+
+        print()
+
+        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
+
+        print()
+
+        while True:
+
+            myNewDataInBD = input().split(None, 3)
+            new_date, new_amount, new_type, new_description = myNewDataInBD
+
+            result_validate = self.validator.is_correct_input(new_date, new_amount, new_type)
+
+            if isinstance(result_validate, list):
+                print()
+                print("Найдены ошибки в вводе: ", end="\n\n")
+                
+                for i in result_validate:
+                    print(i, end="\n\n")
+                print()
+                print("Попробуйте ещё раз ввести строку: ", end="\n\n")
+            else:
+                break
+
+        print()
+
+        self.service.change_data(id_find, new_date, new_amount, new_type, new_description)
+
+
+########  ВСПОМОГАТЕЛЬНЫЕ UI-МЕТОДЫ  ########
+
+    def _display_transactions(self, list_for_display):
+        """Функция красивого вывода данных в прямом или обратном порядке"""
+
+        # Красивый вывод в виде таблицы
+        print("-" * 80)
+        print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
+        print("-" * 80)
+        for item in list_for_display:
+            print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
+        print("-" * 80)
 
     def run(self):
         """Вызов главного меню"""

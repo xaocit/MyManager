@@ -13,6 +13,8 @@ class TransactionService:
         self.creator_of_new_id = creator_of_new_id
         self.sorter = sorter
 
+    ###### Операции CRUD
+
     def add(self, new_date, new_amount, new_type_op, new_description) -> StructDataOfTransaction:
         """Логика добавления новой записи в бд"""
 
@@ -33,6 +35,26 @@ class TransactionService:
 
         return new_Transaction
 
+    def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description) -> StructDataOfTransaction:
+        """Метод, позволяющий изменить существующую строку в бд"""
+
+        # Перебираем в цикле каждую транзакцию, ища нужную
+        for i, transaction in enumerate(self._transactions):
+
+            if transaction.id == find_id:
+                self._transactions[i] = StructDataOfTransaction(
+                    id=transaction.id,
+                    date=changed_date,
+                    amount=changed_amount,
+                    typeOp=changed_type_op,
+                    description=changed_description
+                )
+                break
+
+        # Сохраняем в файле
+        self.repository.save_all(self._transactions)
+
+    ###### ГЕТТЕРЫ
 
     def get_all(self, reverse=False) -> List[StructDataOfTransaction]:
         """Публичный метод-геттер для доступа к копии списка транзакций (прямого или обратного)"""
