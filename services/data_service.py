@@ -1,5 +1,7 @@
 ### Файл с утилитами для функций бд (сервисы)
 
+from typing import List, Union
+
 from core.entities import StructDataOfTransaction
 from core.interfaces import IRepository, ISorter, ICreatorOfNewId
 
@@ -38,18 +40,18 @@ class TransactionService:
     def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description) -> StructDataOfTransaction:
         """Метод, позволяющий изменить существующую строку в бд"""
 
-        # Перебираем в цикле каждую транзакцию, ища нужную
-        for i, transaction in enumerate(self._transactions):
+        # Используем метод get_data_by_id из этого же класса для
+        # получение индекса найденной записи, чтобы по нему заменить данные
+        
+        index_for_changing = self.get_data_by_id(find_id)[1]
 
-            if transaction.id == find_id:
-                self._transactions[i] = StructDataOfTransaction(
-                    id=transaction.id,
-                    date=changed_date,
-                    amount=changed_amount,
-                    typeOp=changed_type_op,
-                    description=changed_description
-                )
-                break
+        self._transactions[index_for_changing] = StructDataOfTransaction(
+            id=find_id,
+            date=changed_date,
+            amount=changed_amount,
+            typeOp=changed_type_op,
+            description=changed_description
+        )
 
         # Сохраняем в файле
         self.repository.save_all(self._transactions)
@@ -73,6 +75,19 @@ class TransactionService:
 
         # Иначе возвращаем просто список транзакций
         return self._transactions
+
+    def get_data_by_id(self, find_id: int) -> tuple[bool, Union[int | None]]:
+        """Метод, возвращающий кортеж, в котором 1-й элемент bool-значение:
+        т. е. есть ли запись с find_id или нет; 
+        а 2-й элемент - индекс найденной записи или None, если не нашли"""
+
+        # Перебираем в цикле каждую транзакцию, ища нужную
+        for i, transaction in enumerate(self._transactions):
+            if find_id == transaction.id:
+                return (True, i)
+
+        return (False, None)
+
 
 class TransactionCreatorOfNewId(ICreatorOfNewId):
     """Класс, реализующий метод формирования id для новой записи"""
