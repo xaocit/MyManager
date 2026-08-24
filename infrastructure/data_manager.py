@@ -3,7 +3,7 @@
 
 # Импорты
 
-import json, commentjson, pathlib
+import commentjson, pathlib
 from typing import List
 
 from core.interfaces import IRepository, IDataFormatter

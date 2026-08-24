@@ -29,7 +29,8 @@ class ConsoleUI:
         print("Изменить данные - 2")
         print("Выйти - 3", end="\n\n")
 
-        myChoice1 = int(input("Сделайте выбор: "))
+        # Валидируем вводимое значение
+        myChoice1 = self._get_validated_my_choice(1, 3)
         print()
 
         match myChoice1:
@@ -40,9 +41,6 @@ class ConsoleUI:
                 self._menu_edit()
             case 3:
                 sys.exit()
-            case _:
-                print("Попробуйте ещё раз!!!", end="\n\n")
-                self._menu_main()
 
     def _menu_view(self):
         """Функция вывода 2-го меню со способами вывода информации"""
@@ -55,7 +53,8 @@ class ConsoleUI:
         print("Посмотреть данные в отсортированном порядке - 3")
         print("Выйти - 4", end="\n\n")
 
-        myChoice2 = int(input("Сделайте выбор: "))
+        # Валидируем вводимое значение
+        myChoice2 = self._get_validated_my_choice(1, 4)
         print()
 
         match myChoice2:
@@ -71,9 +70,6 @@ class ConsoleUI:
                 self._menu_view()
             case 4:
                 self._menu_main()
-            case _:
-                print("Попробуйте ещё раз!!!", end="\n\n")
-                self._menu_view()
 
     def _menu_edit(self):
         """Функция вывода меню с выбором изменения данных"""
@@ -87,7 +83,8 @@ class ConsoleUI:
         print("Удалить запись из бд - 3")
         print("Выйти - 4", end="\n\n")
 
-        myChoice3 = int(input("Сделайте выбор: "))
+        # Валидируем вводимое значение
+        myChoice3 = self._get_validated_my_choice(1, 4)
         print()
 
         match myChoice3:
@@ -103,9 +100,6 @@ class ConsoleUI:
                 self._menu_edit()
             case 4:
                 self._menu_main()
-            case _:
-                print("Попробуйте ещё раз!!!", end="\n\n")
-                self._menu_edit()
 
     def _menu_sort(self):
         """Функция вывода отсортированного списка"""
@@ -136,71 +130,36 @@ class ConsoleUI:
         print()
         print()
 
-        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
+        tuple_of_new_data = self._data_entry_logic()
 
-        print()
+        add_date, add_amount, add_type, add_description = tuple_of_new_data
 
-        while True:
-
-            myNewDataInBD = input().split(None, 3)
-            new_date, new_amount, new_type, new_description = myNewDataInBD
-
-            result_validate = self.validator.is_correct_input(new_date, new_amount, new_type)
-
-            if isinstance(result_validate, list):
-                print()
-                print("Найдены ошибки в вводе: ", end="\n\n")
-                
-                for i in result_validate:
-                    print(i, end="\n\n")
-                print()
-                print("Попробуйте ещё раз ввести строку: ", end="\n\n")
-            else:
-                break
-
-        print()
-
-        self.service.add(new_date, new_amount, new_type, new_description)
+        self.service.add(add_date, add_amount, add_type, add_description)
 
     def _menu_change(self):
         """Функция запроса данных у пользователя для изменения существующей записи в бд"""
 
-        print()
-        print()
+        print(end="\n\n\n")
+
+        # Получаем корректный id
+        id_find = self._get_validated_id("Введите id записи, которую хотите изменить: ")
 
         print()
 
-        print("Введите id записи, которую хотите изменить: ")
+        # Получаем корректные данные, если они прошли проверки
+        tuple_of_new_data = self._data_entry_logic()
+        
+        changed_date, changed_amount, changed_type, changed_description = tuple_of_new_data
 
-        id_find = int(input())
+        # Меняем в списке 1 элемент
+        self.service.change_data(
+            id_find, 
+            changed_date, 
+            changed_amount, 
+            changed_type, 
+            changed_description
+            )
 
-        print()
-
-        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
-
-        print()
-
-        while True:
-
-            myNewDataInBD = input().split(None, 3)
-            new_date, new_amount, new_type, new_description = myNewDataInBD
-
-            result_validate = self.validator.is_correct_input(new_date, new_amount, new_type)
-
-            if isinstance(result_validate, list):
-                print()
-                print("Найдены ошибки в вводе: ", end="\n\n")
-                
-                for i in result_validate:
-                    print(i, end="\n\n")
-                print()
-                print("Попробуйте ещё раз ввести строку: ", end="\n\n")
-            else:
-                break
-
-        print()
-
-        self.service.change_data(id_find, new_date, new_amount, new_type, new_description)
 
 
 ########  ВСПОМОГАТЕЛЬНЫЕ UI-МЕТОДЫ  ########
@@ -215,6 +174,84 @@ class ConsoleUI:
         for item in list_for_display:
             print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
         print("-" * 80)
+
+    def _data_entry_logic(self):
+        """Метод, реализующий логику вывода ошибок, если они есть при добавлении или изменении записи
+        Возвращает введённые данные, если они прошли проверки"""
+
+        print()
+        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
+
+        while True:
+
+            myNewDataInBD = input().split(None, 3)
+            new_date, new_amount, new_type, new_description = myNewDataInBD
+
+            # Отлавливаем ошибки, если валидация прошла неуспешно
+            result_validate = self.validator.is_correct_input(new_date, new_amount, new_type)
+
+            if isinstance(result_validate, list):
+                print()
+                print("Найдены ошибки в вводе: ", end="\n\n")
+                
+                for i in result_validate:
+                    print(i, end="\n\n")
+                print()
+                print("Попробуйте ещё раз ввести строку: ", end="\n\n")
+            else:
+                break
+
+        print()
+
+        return (new_date, new_amount, new_type, new_description)
+
+    def _get_validated_id(self, prompt):
+        """Метод валидации вводимого id при изменении, удалении записи.
+        Если всё успешно - возвращает введённый id"""
+
+        while True:
+
+            print(prompt)
+            
+            try: 
+                id_find = int(input())
+
+                if id_find < 0:
+                    print()
+                    print("Id должен быть больше нуля !!!", end="\n\n")
+                    continue
+
+                # Берём только 0-й индекс, поскольку нам нужно только bool - значение
+                if not (self.service.get_data_by_id(id_find)[0]):
+                    print()
+                    print(f"Запись с {id_find} не найдена в базе !!!", end="\n\n")
+
+                else:
+                    return id_find
+
+            except ValueError:
+                print()
+                print("Id должен быть числом !!!")
+
+    def _get_validated_my_choice(self, min_value: int, max_value: int):
+        """Метод для валидации выбора пользователя в различных меню"""
+
+        while True:
+
+            try:
+                user_choice = int(input("Сделайте выбор: "))
+
+                if min_value <= user_choice <= max_value:
+                    return user_choice
+
+                else:
+                    print()
+                    print(f"Введите значение с {min_value} до {max_value} !!!", end="\n\n")
+                    continue
+
+            except ValueError:
+                print()
+                print("Введите число !!!", end="\n\n")
 
     def run(self):
         """Вызов главного меню"""

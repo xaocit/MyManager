@@ -44,10 +44,10 @@
         },
         {
             "id": 7,
-            "date": "23.08.2026",
-            "amount": "50",
+            "date": "24.04.2025",
+            "amount": "343",
             "type": "expense",
-            "description": "поездка на автобусе"
+            "description": "ТЕст"
         },
         {
             "id": 8,
