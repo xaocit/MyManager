@@ -184,25 +184,23 @@ class ConsoleUI:
 
         while True:
 
-            myNewDataInBD = input().split(None, 3)
-            new_date, new_amount, new_type, new_description = myNewDataInBD
-
+            my_new_data_in_bd = input()
+            
             # Отлавливаем ошибки, если валидация прошла неуспешно
-            result_validate = self.validator.is_correct_input(new_date, new_amount, new_type)
+            result_validate = self.validator.is_correct_input(my_new_data_in_bd, 4)
 
-            if isinstance(result_validate, list):
+            # list - если ошибки связаны с неверным форматом полей
+            # str - если возникла ошибка с количеством
+            if isinstance(result_validate, str):
                 print()
-                print("Найдены ошибки в вводе: ", end="\n\n")
-                
-                for i in result_validate:
-                    print(i, end="\n\n")
-                print()
+                print(f"Найдена ошибка в вводе: {result_validate}", end="\n\n")
                 print("Попробуйте ещё раз ввести строку: ", end="\n\n")
             else:
                 break
 
         print()
 
+        new_date, new_amount, new_type, new_description = my_new_data_in_bd.split(None, 3)
         return (new_date, new_amount, new_type, new_description)
 
     def _get_validated_id(self, prompt):
