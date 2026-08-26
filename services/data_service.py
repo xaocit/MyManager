@@ -37,7 +37,7 @@ class TransactionService:
 
         return new_Transaction
 
-    def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description) -> StructDataOfTransaction:
+    def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description):
         """Метод, позволяющий изменить существующую строку в бд"""
 
         # Используем метод get_data_by_id из этого же класса для
@@ -56,6 +56,17 @@ class TransactionService:
         # Сохраняем в файле
         self.repository.save_all(self._transactions)
 
+    def delete_data(self, find_id):
+        """Метод, удаляющий запись в бд по id"""
+
+        index_for_deleting = self.get_data_by_id(find_id)[1]
+
+        # Удаляем транзакцию по id
+        del self._transactions[index_for_deleting]
+
+        # Сохраняем в файл
+        self.repository.save_all(self._transactions)
+
     ###### ГЕТТЕРЫ
 
     def get_all(self, reverse=False) -> List[StructDataOfTransaction]:
@@ -64,7 +75,6 @@ class TransactionService:
         is_reverse_int = int(reverse)
 
         return self._transactions.copy()[::-1 if is_reverse_int == 1 else 1]
-
 
     def get_sorted(self, field_indicies: List[int]) -> List[StructDataOfTransaction]:
         """Публичный метод-геттер для доступа к отсортированному списку транзакций"""

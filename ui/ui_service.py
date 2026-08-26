@@ -96,7 +96,7 @@ class ConsoleUI:
                 self._menu_change()
                 self._menu_edit()
             case 3:
-                #self._menu_delete(data)
+                self._menu_delete()
                 self._menu_edit()
             case 4:
                 self._menu_main()
@@ -137,7 +137,7 @@ class ConsoleUI:
         self.service.add(add_date, add_amount, add_type, add_description)
 
     def _menu_change(self):
-        """Функция запроса данных у пользователя для изменения существующей записи в бд"""
+        """Функция, соединяющая всю ui-логику для изменения данных"""
 
         print(end="\n\n\n")
 
@@ -160,7 +160,20 @@ class ConsoleUI:
             changed_description
             )
 
+    def _menu_delete(self):
+        """ui-логика, связанная с удалением данных по id"""
 
+        print(end="\n\n\n")
+        
+        # Получаем корректный id
+        id_find = self._get_validated_id("Введите id записи, которую хотите удалить: ")
+
+        print()
+
+        # Удаляем в списке 1 элемент
+        self.service.delete_data(id_find)
+
+        print("Успешно удалено.", end="\n\n")
 
 ########  ВСПОМОГАТЕЛЬНЫЕ UI-МЕТОДЫ  ########
 
@@ -216,13 +229,13 @@ class ConsoleUI:
 
                 if id_find < 0:
                     print()
-                    print("Id должен быть больше нуля !!!", end="\n\n")
+                    print("Id должен быть больше нуля !!! Попробуйте ещё раз.", end="\n\n")
                     continue
 
                 # Берём только 0-й индекс, поскольку нам нужно только bool - значение
                 if not (self.service.get_data_by_id(id_find)[0]):
                     print()
-                    print(f"Запись с {id_find} не найдена в базе !!!", end="\n\n")
+                    print(f"Запись с {id_find} не найдена в базе !!! Попробуйте ещё раз.", end="\n\n")
 
                 else:
                     return id_find
