@@ -5,7 +5,7 @@ from typing import List, Union
 from core.entities import StructDataOfTransaction
 from core.interfaces import IRepository, ISorter, ICreatorOfNewId
 
-class TransactionService:
+class TransactionService:  ## РАЗДЕЛЮ НА 2-3 КЛАССА !!!
     """Класс-сервис, реализующий публичный интерфейс для работы со списком транзакций"""
 
     def __init__(self, repository: IRepository, creator_of_new_id: ICreatorOfNewId, sorter: List[ISorter] = None):

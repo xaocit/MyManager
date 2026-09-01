@@ -3,12 +3,12 @@
 # Импорты
 
 import sys
-from services.data_service import TransactionService
-from services.data_input_validator import ValidatorOfInputData
+from services.data_service import TransactionService  # Зависим от конкретных реализаций !!!
+from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
 
 # Конец импортов
 
-class ConsoleUI:
+class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ ЛОГИКУ ДЛЯ ПРОСТОЙ ПЕРЕДАЧИ ЗАВИСИМОСТЕЙ В ДРУГИЕ КЛАССЫ
     """Класс с менюшками и методами, предназначенными для их работы"""
 
     def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
@@ -16,7 +16,7 @@ class ConsoleUI:
 
         self.validator = validator
 
-########  ОБЫЧНЫЕ МЕТОДЫ МЕНЮ  ########
+########  ОБЫЧНЫЕ МЕТОДЫ МЕНЮ  ########  ВЫВОД СООБЩЕНИЙ ВЫВЕДУ В ОТДЕЛЬНЫЕ МЕТОДЫ ДРУГОГО КЛАССА
 
     def _menu_main(self):
         """Функция вывода 1-го меню"""
