@@ -72,8 +72,9 @@ class ValidatorOfInputData(ValidateCountOfValues, ValidateDate, ValidateAmount, 
         # В самом начале возвращаем ошибку валидации количества полей, если она есть
         if isinstance(result_of_validate_count_of_fields, str):
             return result_of_validate_count_of_fields
-        
-        input_date, input_amount, input_operation, _ = my_new_data_in_bd.split(None, correct_count_of_fields)
+
+        correct_count_of_spaces = correct_count_of_fields - 1
+        input_date, input_amount, input_operation, _ = my_new_data_in_bd.split(None, correct_count_of_spaces)
         
         result_of_validate_date = self.is_correct_date(input_date)
         result_of_validate_amount = self.is_correct_amount(input_amount)

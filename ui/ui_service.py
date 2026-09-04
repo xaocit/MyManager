@@ -8,29 +8,49 @@ from services.data_input_validator import ValidatorOfInputData  # Зависим
 
 # Конец импортов
 
-class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ ЛОГИКУ ДЛЯ ПРОСТОЙ ПЕРЕДАЧИ ЗАВИСИМОСТЕЙ В ДРУГИЕ КЛАССЫ
+class GeneralUiClass:
+    """Главный ui-класс, который реализует неск. задач: 
+    1) Собирает все зависимости и передаёт их другим классам (композиция)
+    2) Запускает стартовый интерфейс"""
+
+    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
+
+            # Внешние зависимости (объекты классов других файлов)
+            self.service = service
+            self.validator = validator
+
+            # Внутренние зависимости (объекты классов этого файла)
+            
+            self.start_menu = ConsoleUI(service, validator)
+
+    def run(self):
+        """Вызов главного меню"""
+        self.start_menu._menu_main()
+
+
+class ConsoleUI:
     """Класс с менюшками и методами, предназначенными для их работы"""
 
     def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
-        self.service = service
 
+        # Внешние зависимости (объекты классов других файлов)
+        self.service = service
         self.validator = validator
 
-########  ОБЫЧНЫЕ МЕТОДЫ МЕНЮ  ########  ВЫВОД СООБЩЕНИЙ ВЫВЕДУ В ОТДЕЛЬНЫЕ МЕТОДЫ ДРУГОГО КЛАССА
+        # Внутренние зависимости (объекты классов этого файла)
+        self.interfaces_menu = ConsoleInterfaceMessages()
+        self.simple_ui_validator = UiValidatorOfInputData(service, validator)
+        self.crud_menu_methods = CRUDmenuMethods(service, validator)
+        self.display_data_methods = DisplayData()
 
+        
     def _menu_main(self):
         """Функция вывода 1-го меню"""
 
-        print("Здравствуйте! Вы в менеджере ваших расходов и доходов. Что вы хотите сделать?", end="\n\n")
-
-        print()
-
-        print("Посмотреть данные - 1")
-        print("Изменить данные - 2")
-        print("Выйти - 3", end="\n\n")
+        self.interfaces_menu._menu_main_interface()
 
         # Валидируем вводимое значение
-        myChoice1 = self._get_validated_my_choice(1, 3)
+        myChoice1 = self.simple_ui_validator._get_validated_my_choice(1, 3)
         print()
 
         match myChoice1:
@@ -44,26 +64,20 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
 
     def _menu_view(self):
         """Функция вывода 2-го меню со способами вывода информации"""
-        print()
 
-        print()
-
-        print("Посмотреть данные в прямом порядке - 1")
-        print("Посмотреть данные в обратном порядке - 2")
-        print("Посмотреть данные в отсортированном порядке - 3")
-        print("Выйти - 4", end="\n\n")
+        self.interfaces_menu._menu_view_interface()
 
         # Валидируем вводимое значение
-        myChoice2 = self._get_validated_my_choice(1, 4)
+        myChoice2 = self.simple_ui_validator._get_validated_my_choice(1, 4)
         print()
 
         match myChoice2:
 
             case 1:
-                self._display_transactions(self.service.get_all())
+                self.display_data_methods._display_transactions(self.service.get_all())
                 self._menu_view()
             case 2:
-                self._display_transactions(self.service.get_all(reverse=True))
+                self.display_data_methods._display_transactions(self.service.get_all(reverse=True))
                 self._menu_view()
             case 3:
                 self._menu_sort()
@@ -74,29 +88,22 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
     def _menu_edit(self):
         """Функция вывода меню с выбором изменения данных"""
 
-        print()
-
-        print()
-
-        print("Добавить новую запись в бд - 1")
-        print("Изменить существующую запись в бд - 2")
-        print("Удалить запись из бд - 3")
-        print("Выйти - 4", end="\n\n")
+        self.interfaces_menu._menu_edit_interface()
 
         # Валидируем вводимое значение
-        myChoice3 = self._get_validated_my_choice(1, 4)
+        myChoice3 = self.simple_ui_validator._get_validated_my_choice(1, 4)
         print()
 
         match myChoice3:
 
             case 1:
-                self._menu_add()
+                self.crud_menu_methods._menu_add()
                 self._menu_edit()
             case 2:
-                self._menu_change()
+                self.crud_menu_methods._menu_change()
                 self._menu_edit()
             case 3:
-                self._menu_delete()
+                self.crud_menu_methods._menu_delete()
                 self._menu_edit()
             case 4:
                 self._menu_main()
@@ -122,7 +129,33 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
         else:
             print("НЕТ ДАННЫХ В ФАЙЛЕ ДЛЯ СОРТИРОВКИ!!!")
 
-########  МЕТОДЫ CRUD-МЕНЮ  ########
+
+class DisplayData:
+    """Класс, реализующий методы по выводу данных в интерфейс ui"""
+    
+    def _display_transactions(self, list_for_display):
+        """Функция красивого вывода данных в прямом или обратном порядке"""
+
+        # Красивый вывод в виде таблицы
+        print("-" * 80)
+        print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
+        print("-" * 80)
+        for item in list_for_display:
+            print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
+        print("-" * 80)
+
+
+class CRUDmenuMethods:
+    """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
+
+    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
+
+        # Внешние зависимости (объекты классов других файлов)
+        self.service = service
+        self.validator = validator
+
+        # Внутренние зависимости (объекты классов этого файла)
+        self.simple_ui_validator = UiValidatorOfInputData(service, validator)
 
     def _menu_add(self):
         """Функция запроса данных у пользователя для добавления"""
@@ -130,7 +163,7 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
         print()
         print()
 
-        tuple_of_new_data = self._data_entry_logic()
+        tuple_of_new_data = self.simple_ui_validator._data_entry_logic()
 
         add_date, add_amount, add_type, add_description = tuple_of_new_data
 
@@ -142,12 +175,12 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
         print(end="\n\n\n")
 
         # Получаем корректный id
-        id_find = self._get_validated_id("Введите id записи, которую хотите изменить: ")
+        id_find = self.simple_ui_validator._get_validated_id("Введите id записи, которую хотите изменить: ")
 
         print()
 
         # Получаем корректные данные, если они прошли проверки
-        tuple_of_new_data = self._data_entry_logic()
+        tuple_of_new_data = self.simple_ui_validator._data_entry_logic()
         
         changed_date, changed_amount, changed_type, changed_description = tuple_of_new_data
 
@@ -166,7 +199,7 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
         print(end="\n\n\n")
         
         # Получаем корректный id
-        id_find = self._get_validated_id("Введите id записи, которую хотите удалить: ")
+        id_find = self.simple_ui_validator._get_validated_id("Введите id записи, которую хотите удалить: ")
 
         print()
 
@@ -175,47 +208,79 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
 
         print("Успешно удалено.", end="\n\n")
 
-########  ВСПОМОГАТЕЛЬНЫЕ UI-МЕТОДЫ  ########
 
-    def _display_transactions(self, list_for_display):
-        """Функция красивого вывода данных в прямом или обратном порядке"""
+class ConsoleInterfaceMessages:
+    """Класс с ui-интерфейсами различных меню"""
 
-        # Красивый вывод в виде таблицы
-        print("-" * 80)
-        print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
-        print("-" * 80)
-        for item in list_for_display:
-            print(f"{item.id:<5} {item.date:<12} {float(item.amount):<10.2f} {item.typeOp:<15} {item.description}")
-        print("-" * 80)
+    def _menu_main_interface(self):
 
+        print("Здравствуйте! Вы в менеджере ваших расходов и доходов. Что вы хотите сделать?", end="\n\n")
+        
+        print()
+
+        print("Посмотреть данные - 1")
+        print("Изменить данные - 2")
+        print("Выйти - 3", end="\n\n")
+
+    def _menu_view_interface(self):
+
+        print()
+
+        print()
+
+        print("Посмотреть данные в прямом порядке - 1")
+        print("Посмотреть данные в обратном порядке - 2")
+        print("Посмотреть данные в отсортированном порядке - 3")
+        print("Выйти - 4", end="\n\n")
+
+    def _menu_edit_interface(self):
+
+        print()
+        
+        print()
+
+        print("Добавить новую запись в бд - 1")
+        print("Изменить существующую запись в бд - 2")
+        print("Удалить запись из бд - 3")
+        print("Выйти - 4", end="\n\n")
+
+
+class UiValidatorOfInputData:
+    """Класс, реализующий простую валидацию различных вводимых значений в различных сценариях на уровне ui-слоя"""
+
+    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
+        # Внешние зависимости (объекты классов других файлов)
+        self.service = service
+        self.validator = validator
+    
     def _data_entry_logic(self):
-        """Метод, реализующий логику вывода ошибок, если они есть при добавлении или изменении записи
-        Возвращает введённые данные, если они прошли проверки"""
-
-        print()
-        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
-
-        while True:
-
-            my_new_data_in_bd = input()
-            
-            # Отлавливаем ошибки, если валидация прошла неуспешно
-            result_validate = self.validator.is_correct_input(my_new_data_in_bd, 4)
-
-            # list - если ошибки связаны с неверным форматом полей
-            # str - если возникла ошибка с количеством
-            if isinstance(result_validate, str):
-                print()
-                print(f"Найдена ошибка в вводе: {result_validate}", end="\n\n")
-                print("Попробуйте ещё раз ввести строку: ", end="\n\n")
-            else:
-                break
-
-        print()
-
-        new_date, new_amount, new_type, new_description = my_new_data_in_bd.split(None, 3)
-        return (new_date, new_amount, new_type, new_description)
-
+            """Метод, реализующий логику вывода ошибок, если они есть при добавлении или изменении записи
+            Возвращает введённые данные, если они прошли проверки"""
+    
+            print()
+            print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
+    
+            while True:
+    
+                my_new_data_in_bd = input()
+                
+                # Отлавливаем ошибки, если валидация прошла неуспешно
+                result_validate = self.validator.is_correct_input(my_new_data_in_bd, 4)
+    
+                # list - если ошибки связаны с неверным форматом полей
+                # str - если возникла ошибка с количеством
+                if isinstance(result_validate, str):
+                    print()
+                    print(f"Найдена ошибка в вводе: {result_validate}", end="\n\n")
+                    print("Попробуйте ещё раз ввести строку: ", end="\n\n")
+                else:
+                    break
+    
+            print()
+    
+            new_date, new_amount, new_type, new_description = my_new_data_in_bd.split(None, 3)
+            return (new_date, new_amount, new_type, new_description)
+    
     def _get_validated_id(self, prompt):
         """Метод валидации вводимого id при изменении, удалении записи.
         Если всё успешно - возвращает введённый id"""
@@ -243,7 +308,7 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
             except ValueError:
                 print()
                 print("Id должен быть числом !!!")
-
+    
     def _get_validated_my_choice(self, min_value: int, max_value: int):
         """Метод для валидации выбора пользователя в различных меню"""
 
@@ -263,7 +328,13 @@ class ConsoleUI: # РАЗДЕЛЮ НА 5-6 КЛАССОВ !!! # РЕАЛИЗУЮ
             except ValueError:
                 print()
                 print("Введите число !!!", end="\n\n")
+    
 
-    def run(self):
-        """Вызов главного меню"""
-        self._menu_main()
+
+
+
+
+
+
+
+
