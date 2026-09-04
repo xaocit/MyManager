@@ -9,27 +9,7 @@ from services.data_input_validator import ValidatorOfInputData  # Зависим
 # Конец импортов
 
 class GeneralUiClass:
-    """Главный ui-класс, который реализует неск. задач: 
-    1) Собирает все зависимости и передаёт их другим классам (композиция)
-    2) Запускает стартовый интерфейс"""
-
-    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
-
-            # Внешние зависимости (объекты классов других файлов)
-            self.service = service
-            self.validator = validator
-
-            # Внутренние зависимости (объекты классов этого файла)
-            
-            self.start_menu = ConsoleUI(service, validator)
-
-    def run(self):
-        """Вызов главного меню"""
-        self.start_menu._menu_main()
-
-
-class ConsoleUI:
-    """Класс с менюшками и методами, предназначенными для их работы"""
+    """Главный ui-класс"""
 
     def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
 
@@ -43,7 +23,10 @@ class ConsoleUI:
         self.crud_menu_methods = CRUDmenuMethods(service, validator)
         self.display_data_methods = DisplayData()
 
-        
+    def run(self):
+        """Вызов главного меню"""
+        self._menu_main()
+
     def _menu_main(self):
         """Функция вывода 1-го меню"""
 
@@ -132,7 +115,7 @@ class ConsoleUI:
 
 class DisplayData:
     """Класс, реализующий методы по выводу данных в интерфейс ui"""
-    
+
     def _display_transactions(self, list_for_display):
         """Функция красивого вывода данных в прямом или обратном порядке"""
 
