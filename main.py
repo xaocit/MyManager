@@ -7,7 +7,7 @@ from infrastructure.data_manager import JsonRepository, JsonFormatter
 from services.data_service import TransactionService, TransactionSorter, TransactionCreatorOfNewId
 from services.data_input_validator import ValidatorOfInputData
 
-from ui.ui_service import GeneralUiClass
+from ui.ui_service import GeneralUiClass, FactoryDependencies
 
 from config import DATA_FILE_PATH
 
@@ -35,7 +35,10 @@ def main():
     validator = ValidatorOfInputData()
 
     # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
-    general_ui_obj = GeneralUiClass(service, validator)
+
+    build_dependencies = FactoryDependencies(service, validator)
+
+    general_ui_obj = GeneralUiClass(service, validator, build_dependencies)
 
     # Запускаем приложение включением ui
     general_ui_obj.run()
