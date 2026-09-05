@@ -8,20 +8,47 @@ from services.data_input_validator import ValidatorOfInputData  # Зависим
 
 # Конец импортов
 
-class GeneralUiClass:
-    """Главный ui-класс"""
+class FactoryDependencies:
+    """Класс, в котором собираем зависимости для их передачи в другие классы:
+        1) В инициализаторе получаем внешние зависимости
+        2) В методах возвращаем объекты классов (в которых собираем, где нужно внешние зависимости) этого файла"""
 
     def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
+
+        self.service = service
+        self.validator = validator
+
+    def get_ui_interfaces(self):
+        """Возвращаем объект класса с разными интерфейсами"""
+        return ConsoleInterfaceMessages()
+
+    def get_ui_validator(self):
+        """Возвращаем объект класса с ui-валидатором"""
+        return UiValidatorOfInputData(self.service, self.validator)
+
+    def get_ui_crud_menu(self):
+        """Возвращаем объект класса с меню crud-операциями"""
+        return CRUDmenuMethods(self.service, self.validator, self)
+
+    def get_ui_output_data(self):
+        """Возвращаем объект класса с выводом данных бд"""
+        return DisplayData()
+
+
+class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
+    """Главный ui-класс"""
+
+    def __init__(self, service, validator, container: FactoryDependencies):
 
         # Внешние зависимости (объекты классов других файлов)
         self.service = service
         self.validator = validator
 
         # Внутренние зависимости (объекты классов этого файла)
-        self.interfaces_menu = ConsoleInterfaceMessages()
-        self.simple_ui_validator = UiValidatorOfInputData(service, validator)
-        self.crud_menu_methods = CRUDmenuMethods(service, validator)
-        self.display_data_methods = DisplayData()
+        self.interfaces_menu = container.get_ui_interfaces()
+        self.simple_ui_validator = container.get_ui_validator()
+        self.crud_menu_methods = container.get_ui_crud_menu()
+        self.display_data_methods = container.get_ui_output_data()
 
     def run(self):
         """Вызов главного меню"""
@@ -131,14 +158,13 @@ class DisplayData:
 class CRUDmenuMethods:
     """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
 
-    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
-
+    def __init__(self, service, validator, container):
         # Внешние зависимости (объекты классов других файлов)
         self.service = service
         self.validator = validator
 
         # Внутренние зависимости (объекты классов этого файла)
-        self.simple_ui_validator = UiValidatorOfInputData(service, validator)
+        self.simple_ui_validator = container.get_ui_validator()
 
     def _menu_add(self):
         """Функция запроса данных у пользователя для добавления"""
@@ -195,7 +221,8 @@ class CRUDmenuMethods:
 class ConsoleInterfaceMessages:
     """Класс с ui-интерфейсами различных меню"""
 
-    def _menu_main_interface(self):
+    @staticmethod
+    def _menu_main_interface():
 
         print("Здравствуйте! Вы в менеджере ваших расходов и доходов. Что вы хотите сделать?", end="\n\n")
         
@@ -205,7 +232,8 @@ class ConsoleInterfaceMessages:
         print("Изменить данные - 2")
         print("Выйти - 3", end="\n\n")
 
-    def _menu_view_interface(self):
+    @staticmethod
+    def _menu_view_interface():
 
         print()
 
@@ -216,7 +244,8 @@ class ConsoleInterfaceMessages:
         print("Посмотреть данные в отсортированном порядке - 3")
         print("Выйти - 4", end="\n\n")
 
-    def _menu_edit_interface(self):
+    @staticmethod
+    def _menu_edit_interface():
 
         print()
         
@@ -231,7 +260,7 @@ class ConsoleInterfaceMessages:
 class UiValidatorOfInputData:
     """Класс, реализующий простую валидацию различных вводимых значений в различных сценариях на уровне ui-слоя"""
 
-    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
+    def __init__(self, service, validator):
         # Внешние зависимости (объекты классов других файлов)
         self.service = service
         self.validator = validator
