@@ -35,10 +35,9 @@ def main():
     validator = ValidatorOfInputData()
 
     # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
-
     build_dependencies = FactoryDependencies(service, validator)
 
-    general_ui_obj = GeneralUiClass(service, validator, build_dependencies)
+    general_ui_obj = GeneralUiClass(build_dependencies)
 
     # Запускаем приложение включением ui
     general_ui_obj.run()

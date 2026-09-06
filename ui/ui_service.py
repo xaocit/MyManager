@@ -8,6 +8,8 @@ from services.data_input_validator import ValidatorOfInputData  # Зависим
 
 # Конец импортов
 
+########## РАЗДЕЛЮ КЛАССЫ ПО МОДУЛЯМ ##########
+
 class FactoryDependencies:
     """Класс, в котором собираем зависимости для их передачи в другие классы:
         1) В инициализаторе получаем внешние зависимости
@@ -15,8 +17,19 @@ class FactoryDependencies:
 
     def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
 
-        self.service = service
-        self.validator = validator
+        self._service = service
+        self._validator = validator
+
+
+    ### Геттеры получения внешних зависимостей
+    def get_service(self):
+        return self._service
+
+    def get_validator(self):
+        return self._validator
+
+
+    ### Геттеры получения объектов данного файла
 
     def get_ui_interfaces(self):
         """Возвращаем объект класса с разными интерфейсами"""
@@ -24,11 +37,11 @@ class FactoryDependencies:
 
     def get_ui_validator(self):
         """Возвращаем объект класса с ui-валидатором"""
-        return UiValidatorOfInputData(self.service, self.validator)
-
+        return UiValidatorOfInputData(self)
+    
     def get_ui_crud_menu(self):
         """Возвращаем объект класса с меню crud-операциями"""
-        return CRUDmenuMethods(self.service, self.validator, self)
+        return CRUDmenuMethods(self)
 
     def get_ui_output_data(self):
         """Возвращаем объект класса с выводом данных бд"""
@@ -38,11 +51,11 @@ class FactoryDependencies:
 class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
     """Главный ui-класс"""
 
-    def __init__(self, service, validator, container: FactoryDependencies):
+    def __init__(self, container: FactoryDependencies):
 
         # Внешние зависимости (объекты классов других файлов)
-        self.service = service
-        self.validator = validator
+        self.service = container.get_service()
+        self.validator = container.get_validator()
 
         # Внутренние зависимости (объекты классов этого файла)
         self.interfaces_menu = container.get_ui_interfaces()
@@ -158,10 +171,10 @@ class DisplayData:
 class CRUDmenuMethods:
     """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
 
-    def __init__(self, service, validator, container):
+    def __init__(self, container: FactoryDependencies):
         # Внешние зависимости (объекты классов других файлов)
-        self.service = service
-        self.validator = validator
+        self.service = container.get_service()
+        self.validator = container.get_validator()
 
         # Внутренние зависимости (объекты классов этого файла)
         self.simple_ui_validator = container.get_ui_validator()
@@ -260,10 +273,10 @@ class ConsoleInterfaceMessages:
 class UiValidatorOfInputData:
     """Класс, реализующий простую валидацию различных вводимых значений в различных сценариях на уровне ui-слоя"""
 
-    def __init__(self, service, validator):
+    def __init__(self, container: FactoryDependencies):
         # Внешние зависимости (объекты классов других файлов)
-        self.service = service
-        self.validator = validator
+        self.service = container.get_service()
+        self.validator = container.get_validator()
     
     def _data_entry_logic(self):
             """Метод, реализующий логику вывода ошибок, если они есть при добавлении или изменении записи
