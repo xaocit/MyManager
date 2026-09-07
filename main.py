@@ -4,7 +4,7 @@
 
 from infrastructure.data_manager import JsonRepository, JsonFormatter
 
-from services.data_service import TransactionService, TransactionSorter, TransactionCreatorOfNewId
+from services.data_service import FactoryTransactionDependencies, TransactionSorter, TransactionCreatorOfNewId
 from services.data_input_validator import ValidatorOfInputData
 
 from ui.ui_service import GeneralUiClass, FactoryDependencies
@@ -29,13 +29,15 @@ def main():
     creator_of_new_id = TransactionCreatorOfNewId()
 
     # Собираем в service наш кастомный json-репозиторий и свой сортер для сортировки данных
-    service = TransactionService(repository, creator_of_new_id, sorter)
+    service = FactoryTransactionDependencies(repository, creator_of_new_id, sorter)
+    read_service = service.get_read_service()
+    write_service = service.get_write_service()
 
     # Инициализируем валидатор
     validator = ValidatorOfInputData()
 
     # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
-    build_dependencies = FactoryDependencies(service, validator)
+    build_dependencies = FactoryDependencies(read_service, write_service, validator)
 
     general_ui_obj = GeneralUiClass(build_dependencies)
 
