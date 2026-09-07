@@ -3,7 +3,7 @@
 # Импорты
 
 import sys
-from services.data_service import TransactionService  # Зависим от конкретных реализаций !!!
+from services.data_service import TransactionReadService, TransactionWriteService  # Зависим от конкретных реализаций !!!
 from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
 
 # Конец импортов
@@ -15,15 +15,22 @@ class FactoryDependencies:
         1) В инициализаторе получаем внешние зависимости
         2) В методах возвращаем объекты классов (в которых собираем, где нужно внешние зависимости) этого файла"""
 
-    def __init__(self, service: TransactionService, validator: ValidatorOfInputData):
+    def __init__(self, read_service: TransactionReadService, write_service: TransactionWriteService,
+                 validator: ValidatorOfInputData
+                 ):
 
-        self._service = service
+        self._read_service = read_service
+        self._write_service = write_service
+
         self._validator = validator
 
 
     ### Геттеры получения внешних зависимостей
-    def get_service(self):
-        return self._service
+    def get_read_service(self):
+        return self._read_service
+
+    def get_write_service(self):
+        return self._write_service
 
     def get_validator(self):
         return self._validator
@@ -48,13 +55,14 @@ class FactoryDependencies:
         return DisplayData()
 
 
+
 class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
     """Главный ui-класс"""
 
     def __init__(self, container: FactoryDependencies):
 
         # Внешние зависимости (объекты классов других файлов)
-        self.service = container.get_service()
+        self.read_service = container.get_read_service()
         self.validator = container.get_validator()
 
         # Внутренние зависимости (объекты классов этого файла)
@@ -97,10 +105,10 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         match myChoice2:
 
             case 1:
-                self.display_data_methods._display_transactions(self.service.get_all())
+                self.display_data_methods._display_transactions(self.read_service.get_all())
                 self._menu_view()
             case 2:
-                self.display_data_methods._display_transactions(self.service.get_all(reverse=True))
+                self.display_data_methods._display_transactions(self.read_service.get_all(reverse=True))
                 self._menu_view()
             case 3:
                 self._menu_sort()
@@ -143,10 +151,10 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         masForSorting = list(map(int, input().split()))
         print()
 
-        if self.service.get_all() != []:
-            result = self.service.get_sorted(masForSorting)
+        if self.read_service.get_all() != []:
+            result = self.read_service.get_sorted(masForSorting)
 
-            self._display_transactions(result)
+            self.display_data_methods._display_transactions(result)
 
         # Если файлик пуст, то не выполняем сортировку
         else:
@@ -173,7 +181,7 @@ class CRUDmenuMethods:
 
     def __init__(self, container: FactoryDependencies):
         # Внешние зависимости (объекты классов других файлов)
-        self.service = container.get_service()
+        self.write_service = container.get_write_service()
         self.validator = container.get_validator()
 
         # Внутренние зависимости (объекты классов этого файла)
@@ -189,7 +197,7 @@ class CRUDmenuMethods:
 
         add_date, add_amount, add_type, add_description = tuple_of_new_data
 
-        self.service.add(add_date, add_amount, add_type, add_description)
+        self.write_service.add(add_date, add_amount, add_type, add_description)
 
     def _menu_change(self):
         """Функция, соединяющая всю ui-логику для изменения данных"""
@@ -207,7 +215,7 @@ class CRUDmenuMethods:
         changed_date, changed_amount, changed_type, changed_description = tuple_of_new_data
 
         # Меняем в списке 1 элемент
-        self.service.change_data(
+        self.write_service.change_data(
             id_find, 
             changed_date, 
             changed_amount, 
@@ -226,7 +234,7 @@ class CRUDmenuMethods:
         print()
 
         # Удаляем в списке 1 элемент
-        self.service.delete_data(id_find)
+        self.write_service.delete_data(id_find)
 
         print("Успешно удалено.", end="\n\n")
 
@@ -275,7 +283,7 @@ class UiValidatorOfInputData:
 
     def __init__(self, container: FactoryDependencies):
         # Внешние зависимости (объекты классов других файлов)
-        self.service = container.get_service()
+        self.read_service = container.get_read_service()
         self.validator = container.get_validator()
     
     def _data_entry_logic(self):
@@ -323,7 +331,7 @@ class UiValidatorOfInputData:
                     continue
 
                 # Берём только 0-й индекс, поскольку нам нужно только bool - значение
-                if not (self.service.get_data_by_id(id_find)[0]):
+                if not (self.read_service.get_data_by_id(id_find)[0]):
                     print()
                     print(f"Запись с {id_find} не найдена в базе !!! Попробуйте ещё раз.", end="\n\n")
 
