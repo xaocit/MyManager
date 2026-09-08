@@ -54,7 +54,16 @@ class FactoryDependencies:
         """Возвращаем объект класса с выводом данных бд"""
         return DisplayData()
 
+class RunApp:
+    """Класс, реализующий методы по запуску потока приложения"""
 
+    def __init__(self, general_ui: GeneralUiClass):
+        self.general_ui = general_ui
+
+    def run(self):
+        """Вызов главного меню"""
+
+        self.general_ui._menu_main()
 
 class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
     """Главный ui-класс"""
@@ -71,9 +80,14 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.crud_menu_methods = container.get_ui_crud_menu()
         self.display_data_methods = container.get_ui_output_data()
 
-    def run(self):
-        """Вызов главного меню"""
-        self._menu_main()
+    # def _potok(self):
+    #     """Метод, реализующий беск. цикл программы"""
+
+    #     current_menu = self._menu_main()
+    #     while True:
+            
+    #def _run_menu(self, menu_for_running):
+
 
     def _menu_main(self):
         """Функция вывода 1-го меню"""
@@ -361,13 +375,6 @@ class UiValidatorOfInputData:
             except ValueError:
                 print()
                 print("Введите число !!!", end="\n\n")
-    
-
-
-
-
-
-
 
 
 

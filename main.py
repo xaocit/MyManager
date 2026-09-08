@@ -7,7 +7,7 @@ from infrastructure.data_manager import JsonRepository, JsonFormatter
 from services.data_service import FactoryTransactionDependencies, TransactionSorter, TransactionCreatorOfNewId
 from services.data_input_validator import ValidatorOfInputData
 
-from ui.ui_service import GeneralUiClass, FactoryDependencies
+from ui.ui_service import GeneralUiClass, FactoryDependencies, RunApp
 
 from config import DATA_FILE_PATH
 
@@ -42,7 +42,9 @@ def main():
     general_ui_obj = GeneralUiClass(build_dependencies)
 
     # Запускаем приложение включением ui
-    general_ui_obj.run()
+
+    execute_app = RunApp(general_ui_obj)
+    execute_app.run()
 
 
 if __name__ == "__main__":
