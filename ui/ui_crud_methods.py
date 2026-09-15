@@ -15,13 +15,13 @@ class CRUDmenuMethods:
     """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
 
     def __init__(self, write_service: "TransactionWriteService", validator: "ValidatorOfInputData",
-                 ui_validator: "UiValidatorOfInputData"):
+                 ui_level_validator: "UiValidatorOfInputData"):
         # Внешние зависимости (объекты классов других файлов)
         self.write_service = write_service
         self.validator = validator
 
         # Внутренние зависимости (объекты классов этого файла)
-        self.simple_ui_validator = ui_validator
+        self.ui_level_validator = ui_level_validator
 
     def _menu_add(self):
         """Функция запроса данных у пользователя для добавления"""
@@ -29,7 +29,7 @@ class CRUDmenuMethods:
         print()
         print()
 
-        tuple_of_new_data = self.simple_ui_validator._data_entry_logic()
+        tuple_of_new_data = self.ui_level_validator._data_entry_logic()
 
         add_date, add_amount, add_type, add_description = tuple_of_new_data
 
@@ -41,12 +41,12 @@ class CRUDmenuMethods:
         print(end="\n\n\n")
 
         # Получаем корректный id
-        id_find = self.simple_ui_validator._get_validated_id("Введите id записи, которую хотите изменить: ")
+        id_find = self.ui_level_validator._get_validated_id("Введите id записи, которую хотите изменить: ")
 
         print()
 
         # Получаем корректные данные, если они прошли проверки
-        tuple_of_new_data = self.simple_ui_validator._data_entry_logic()
+        tuple_of_new_data = self.ui_level_validator._data_entry_logic()
         
         changed_date, changed_amount, changed_type, changed_description = tuple_of_new_data
 
@@ -65,7 +65,7 @@ class CRUDmenuMethods:
         print(end="\n\n\n")
         
         # Получаем корректный id
-        id_find = self.simple_ui_validator._get_validated_id("Введите id записи, которую хотите удалить: ")
+        id_find = self.ui_level_validator._get_validated_id("Введите id записи, которую хотите удалить: ")
 
         print()
 

@@ -10,7 +10,14 @@ from services.data_service import (
     )
 from services.data_input_validator import ValidatorOfInputData
 
-from ui.ui_service import GeneralUiClass, FactoryDependencies, RunApp
+# Импорты из ui-слоя
+from ui.ui_crud_methods import CRUDmenuMethods
+from ui.ui_layer_validator import UiValidatorOfInputData
+
+from ui.ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
+from ui.ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
+
+from ui.ui_service import GeneralUiClass, RunApp
 
 from config import DATA_FILE_PATH
 
@@ -38,10 +45,20 @@ def main():
     # Инициализируем валидатор
     validator = ValidatorOfInputData()
 
-    # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
-    build_dependencies = FactoryDependencies(read_service, write_service, validator)
+    # Инициализируем объекты классов файлов ui-слоя
+    ui_level_validator = UiValidatorOfInputData(read_service, validator)
+    crud_menu_methods = CRUDmenuMethods(write_service, validator, ui_level_validator)
 
-    general_ui_obj = GeneralUiClass(build_dependencies)
+    interfaces_menu = ConsoleInterfaceMessages()
+    display_data_methods = TransactionsOutputUI()
+
+
+    # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
+    general_ui_obj = GeneralUiClass(read_service, validator,
+                                    interfaces_menu,
+                                    ui_level_validator,
+                                    crud_menu_methods,
+                                    display_data_methods)
 
     # Запускаем приложение включением ui
 
