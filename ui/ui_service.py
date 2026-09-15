@@ -3,7 +3,7 @@
 # Импорты
 
 import sys
-from services.data_service import TransactionReadService, TransactionWriteService  # Зависим от конкретных реализаций !!!
+from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
 from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
 
 
@@ -17,54 +17,6 @@ from .ui_crud_methods import CRUDmenuMethods
 # Конец импортов
 
 ########## РАЗДЕЛЮ КЛАССЫ ПО МОДУЛЯМ ##########
-
-class FactoryDependencies:
-    """Класс, в котором собираем зависимости для их передачи в другие классы:
-        1) В инициализаторе получаем внешние зависимости
-        2) В методах возвращаем объекты классов (в которых собираем, где нужно внешние зависимости) этого файла"""
-
-    def __init__(self, read_service: TransactionReadService, write_service: TransactionWriteService,
-                 validator: ValidatorOfInputData
-                 ):
-
-        self._read_service = read_service
-        self._write_service = write_service
-
-        self._validator = validator
-
-
-    ### Геттеры получения внешних зависимостей
-    def get_read_service(self):
-        return self._read_service
-
-    def get_write_service(self):
-        return self._write_service
-
-    def get_validator(self):
-        return self._validator
-
-
-    ### Геттеры получения объектов данного файла
-
-    def get_ui_interfaces(self):
-        """Возвращаем объект класса с разными интерфейсами"""
-        return ConsoleInterfaceMessages()
-
-    def get_ui_validator(self):
-        """Возвращаем объект класса с ui-валидатором"""
-        return UiValidatorOfInputData(read_service=self.get_read_service(), 
-                                      validator=self.get_validator()
-                                      )
-    
-    def get_ui_crud_menu(self):
-        """Возвращаем объект класса с меню crud-операциями"""
-        return CRUDmenuMethods(write_service=self.get_write_service(),
-                               validator=self.get_validator(),
-                               ui_validator=self.get_ui_validator())
-
-    def get_ui_output_data(self):
-        """Возвращаем объект класса с выводом данных бд"""
-        return TransactionsOutputUI()
 
 class RunApp:
     """Класс, реализующий методы по запуску потока приложения"""
@@ -80,17 +32,21 @@ class RunApp:
 class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
     """Главный ui-класс"""
 
-    def __init__(self, container: FactoryDependencies):
+    def __init__(self, read_service: TransactionReadService, validator: ValidatorOfInputData,
+                 interfaces_menu: ConsoleInterfaceMessages, 
+                 ui_level_validator: UiValidatorOfInputData, 
+                 crud_menu_methods: CRUDmenuMethods, 
+                 display_data_methods: TransactionsOutputUI):
 
         # Внешние зависимости (объекты классов других файлов)
-        self.read_service = container.get_read_service()
-        self.validator = container.get_validator()
+        self.read_service = read_service
+        self.validator = validator
 
         # Внутренние зависимости (объекты классов этого файла)
-        self.interfaces_menu = container.get_ui_interfaces()
-        self.simple_ui_validator = container.get_ui_validator()
-        self.crud_menu_methods = container.get_ui_crud_menu()
-        self.display_data_methods = container.get_ui_output_data()
+        self.interfaces_menu = interfaces_menu
+        self.ui_level_validator = ui_level_validator
+        self.crud_menu_methods = crud_menu_methods
+        self.display_data_methods = display_data_methods
 
         # Переменная - словарь. Ключ - каждое главное меню, значение - словарь, в котором ключ - цифра, а значение - след. меню
         self._controller = {
@@ -166,7 +122,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.interfaces_menu._menu_main_interface()
 
         # Валидируем вводимое значение
-        my_choice = self.simple_ui_validator._get_validated_my_choice(1, 3)
+        my_choice = self.ui_level_validator._get_validated_my_choice(1, 3)
         print()
 
         return my_choice
@@ -177,7 +133,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.interfaces_menu._menu_view_interface()
 
         # Валидируем вводимое значение
-        my_choice = self.simple_ui_validator._get_validated_my_choice(1, 4)
+        my_choice = self.ui_level_validator._get_validated_my_choice(1, 4)
         print()
 
         return my_choice
@@ -188,7 +144,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.interfaces_menu._menu_edit_interface()
 
         # Валидируем вводимое значение
-        my_choice = self.simple_ui_validator._get_validated_my_choice(1, 4)
+        my_choice = self.ui_level_validator._get_validated_my_choice(1, 4)
         print()
 
         return my_choice
