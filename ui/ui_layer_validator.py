@@ -1,12 +1,5 @@
 ### Модуль с классами/методами с логикой валидаторов на уровне ui-слоя
 
-###### Логика импорта фабрики для проверки типов
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ui_service import FactoryDependencies
-######
-
 from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
 from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
 

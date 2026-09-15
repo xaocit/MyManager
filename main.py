@@ -4,7 +4,10 @@
 
 from infrastructure.data_manager import JsonRepository, JsonFormatter
 
-from services.data_service import FactoryTransactionDependencies, TransactionSorter, TransactionCreatorOfNewId
+from services.data_service import (
+    TransactionReadService, TransactionWriteService, 
+    TransactionSorter, TransactionCreatorOfNewId
+    )
 from services.data_input_validator import ValidatorOfInputData
 
 from ui.ui_service import GeneralUiClass, FactoryDependencies, RunApp
@@ -28,10 +31,9 @@ def main():
     # Инициализируем объект класса для логики создания нового, свободного id
     creator_of_new_id = TransactionCreatorOfNewId()
 
-    # Собираем в service наш кастомный json-репозиторий и свой сортер для сортировки данных
-    service = FactoryTransactionDependencies(repository, creator_of_new_id, sorter)
-    read_service = service.get_read_service()
-    write_service = service.get_write_service()
+    # Собираем в read_service и write_service наш кастомный json-репозиторий и свой сортер для сортировки данных
+    read_service = TransactionReadService(repository, sorter)
+    write_service = TransactionWriteService(repository, creator_of_new_id, read_service)
 
     # Инициализируем валидатор
     validator = ValidatorOfInputData()
