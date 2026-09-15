@@ -181,3 +181,6 @@ coverage.xml
 *.json
 .gitignore
 
+# Модуль pydeps
+*.ini
+*.svg
