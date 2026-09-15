@@ -6,27 +6,6 @@ from core.entities import StructDataOfTransaction
 from core.interfaces import IRepository, ISorter, ICreatorOfNewId
 
 
-class FactoryTransactionDependencies:
-    """Класс, реализующий сборку зависимостей для классов Transaction<Read/Write>Service"""
-
-    def __init__(self, repository: IRepository, creator_of_new_id: ICreatorOfNewId, sorter: List[ISorter] = None):
-
-        self._repository = repository
-        self._creator_of_new_id = creator_of_new_id
-        self._sorter = sorter
-
-    def get_read_service(self):
-        return TransactionReadService(repository=self._repository, sorter=self._sorter)
-
-    def get_write_service(self):
-
-        read_service = self.get_read_service()
-
-        return TransactionWriteService(repository=self._repository, creator_of_new_id=self._creator_of_new_id,
-                                       read_service=read_service)
-
-
-
 class TransactionReadService:
     """Класс, реализующий методы для чтения данных из списка транзакций в разных вариациях"""
 
