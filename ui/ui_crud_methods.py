@@ -8,13 +8,13 @@ if TYPE_CHECKING:
 ######
 
 from services.data_service import TransactionWriteService  # Зависим от конкретных реализаций !!!
-from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
+from services.domain_validator import DomainValidator  # Зависим от конкретных реализаций !!!
 
 
 class CRUDmenuMethods:
     """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
 
-    def __init__(self, write_service: "TransactionWriteService", validator: "ValidatorOfInputData",
+    def __init__(self, write_service: "TransactionWriteService", validator: "DomainValidator",
                  ui_level_validator: "UiValidatorOfInputData"):
         # Внешние зависимости (объекты классов других файлов)
         self.write_service = write_service

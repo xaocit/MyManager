@@ -56,7 +56,7 @@ class ValidateTypeOfOperation():
 
         return "Ошибка! Тип операции должен быть 'expense' или 'income' !!!"
 
-class ValidatorOfInputData(ValidateCountOfValues, ValidateDate, ValidateAmount, ValidateTypeOfOperation):
+class DomainValidator(ValidateCountOfValues, ValidateDate, ValidateAmount, ValidateTypeOfOperation):
     """Класс, реализующий пользовательскую валидацию для проверки вводимых данных, 
     он же - класс-сборщик предыдущих валидаторов"""
 

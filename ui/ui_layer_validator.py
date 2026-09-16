@@ -1,12 +1,12 @@
 ### Модуль с классами/методами с логикой валидаторов на уровне ui-слоя
 
 from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
-from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
+from services.domain_validator import DomainValidator  # Зависим от конкретных реализаций !!!
 
 class UiValidatorOfInputData:
     """Класс, реализующий простую валидацию различных вводимых значений в различных сценариях на уровне ui-слоя"""
 
-    def __init__(self, read_service: "TransactionReadService", validator: "ValidatorOfInputData"):
+    def __init__(self, read_service: "TransactionReadService", validator: "DomainValidator"):
         # Внешние зависимости (объекты классов других файлов)
         self.read_service = read_service
         self.validator = validator
