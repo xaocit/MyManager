@@ -8,7 +8,7 @@ from services.data_service import (
     TransactionReadService, TransactionWriteService, 
     TransactionSorter, TransactionCreatorOfNewId
     )
-from services.data_input_validator import ValidatorOfInputData
+from services.domain_validator import DomainValidator
 
 # Импорты из ui-слоя
 from ui.ui_crud_methods import CRUDmenuMethods
@@ -43,7 +43,7 @@ def main():
     write_service = TransactionWriteService(repository, creator_of_new_id, read_service)
 
     # Инициализируем валидатор
-    validator = ValidatorOfInputData()
+    validator = DomainValidator()
 
     # Инициализируем объекты классов файлов ui-слоя
     ui_level_validator = UiValidatorOfInputData(read_service, validator)

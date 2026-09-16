@@ -4,7 +4,7 @@
 
 import sys
 from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
-from services.data_input_validator import ValidatorOfInputData  # Зависим от конкретных реализаций !!!
+from services.domain_validator import DomainValidator  # Зависим от конкретных реализаций !!!
 
 
 from .ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
@@ -31,7 +31,7 @@ class RunApp:
 class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
     """Главный ui-класс"""
 
-    def __init__(self, read_service: TransactionReadService, validator: ValidatorOfInputData,
+    def __init__(self, read_service: TransactionReadService, validator: DomainValidator,
                  interfaces_menu: ConsoleInterfaceMessages, 
                  ui_level_validator: UiValidatorOfInputData, 
                  crud_menu_methods: CRUDmenuMethods, 
