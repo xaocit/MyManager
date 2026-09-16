@@ -26,7 +26,6 @@ class RunApp:
 
     def run(self):
         """Вызов главного меню"""
-
         self.general_ui._stream_program()
 
 class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
@@ -38,11 +37,11 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
                  crud_menu_methods: CRUDmenuMethods, 
                  display_data_methods: TransactionsOutputUI):
 
-        # Внешние зависимости (объекты классов других файлов)
+        # Внешние зависимости (объекты классов других слоёв)
         self.read_service = read_service
         self.validator = validator
 
-        # Внутренние зависимости (объекты классов этого файла)
+        # Внутренние зависимости (объекты классов этого слоя)
         self.interfaces_menu = interfaces_menu
         self.ui_level_validator = ui_level_validator
         self.crud_menu_methods = crud_menu_methods
@@ -53,7 +52,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
             "_menu_main" : {
                 1: self._menu_view,
                 2: self._menu_edit,
-                3: sys.exit
+                3: self.exit_application
             },
             "_menu_view" : {
                 1: self._action_view_direct,
@@ -99,8 +98,16 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
                 previos_menu = current_menu
                 current_menu = self._get_next_menu(current_menu.__name__, next_choice)
 
+
             else:  ## Если нет - просто оставляем тек. меню
                 current_menu = previos_menu
+
+    def exit_application(self):
+        """Метод закрытия приложения"""
+
+        print()
+        print("Завершение работы приложения !!!")
+        sys.exit()
 
     def _action_view_direct(self):
         """Действие: Показ в прямом порядке"""
