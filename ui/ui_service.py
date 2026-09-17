@@ -4,13 +4,11 @@
 
 import sys
 from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
-from services.domain_validator import DomainValidator  # Зависим от конкретных реализаций !!!
-
 
 from .ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
 from .ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
 
-from .ui_layer_validator import UiValidatorOfInputData
+from .ui_layer_validator import UiValidatorOfMenuChoice
 
 from .ui_crud_methods import CRUDmenuMethods
 
@@ -28,22 +26,22 @@ class RunApp:
         """Вызов главного меню"""
         self.general_ui._stream_program()
 
-class GeneralUiClass:  ## Переделать - нарушение SRP и переименовать
+class GeneralUiClass:  ## Разбить по классам !!!
     """Главный ui-класс"""
 
-    def __init__(self, read_service: TransactionReadService, validator: DomainValidator,
+    def __init__(self, read_service: TransactionReadService,
+                 
                  interfaces_menu: ConsoleInterfaceMessages, 
-                 ui_level_validator: UiValidatorOfInputData, 
+                 ui_validator_choice: UiValidatorOfMenuChoice, 
                  crud_menu_methods: CRUDmenuMethods, 
                  display_data_methods: TransactionsOutputUI):
 
         # Внешние зависимости (объекты классов других слоёв)
         self.read_service = read_service
-        self.validator = validator
 
         # Внутренние зависимости (объекты классов этого слоя)
         self.interfaces_menu = interfaces_menu
-        self.ui_level_validator = ui_level_validator
+        self.ui_validator_choice = ui_validator_choice
         self.crud_menu_methods = crud_menu_methods
         self.display_data_methods = display_data_methods
 
@@ -129,7 +127,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.interfaces_menu._menu_main_interface()
 
         # Валидируем вводимое значение
-        my_choice = self.ui_level_validator._get_validated_my_choice(1, 3)
+        my_choice = self.ui_validator_choice._get_validated_my_choice(1, 3)
         print()
 
         return my_choice
@@ -140,7 +138,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.interfaces_menu._menu_view_interface()
 
         # Валидируем вводимое значение
-        my_choice = self.ui_level_validator._get_validated_my_choice(1, 4)
+        my_choice = self.ui_validator_choice._get_validated_my_choice(1, 4)
         print()
 
         return my_choice
@@ -151,7 +149,7 @@ class GeneralUiClass:  ## Переделать - нарушение SRP и пе�
         self.interfaces_menu._menu_edit_interface()
 
         # Валидируем вводимое значение
-        my_choice = self.ui_level_validator._get_validated_my_choice(1, 4)
+        my_choice = self.ui_validator_choice._get_validated_my_choice(1, 4)
         print()
 
         return my_choice

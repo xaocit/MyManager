@@ -4,24 +4,23 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ui_layer_validator import UiValidatorOfInputData
+    from ui_layer_validator import UiValidatorOfInputTransaction, UiValidatorOfInputId
 ######
 
 from services.data_service import TransactionWriteService  # Зависим от конкретных реализаций !!!
-from services.domain_validator import DomainValidator  # Зависим от конкретных реализаций !!!
 
 
 class CRUDmenuMethods:
     """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
 
-    def __init__(self, write_service: "TransactionWriteService", validator: "DomainValidator",
-                 ui_level_validator: "UiValidatorOfInputData"):
-        # Внешние зависимости (объекты классов других файлов)
+    def __init__(self, write_service: TransactionWriteService,
+                 ui_level_validator_transaction: UiValidatorOfInputTransaction, ui_level_validator_id: UiValidatorOfInputId):
+        # Внешние зависимости (объекты классов других слоёв)
         self.write_service = write_service
-        self.validator = validator
 
-        # Внутренние зависимости (объекты классов этого файла)
-        self.ui_level_validator = ui_level_validator
+        # Внутренние зависимости (объекты классов этого слоя)
+        self.ui_level_validator_transaction = ui_level_validator_transaction
+        self.ui_level_validator_id = ui_level_validator_id
 
     def _menu_add(self):
         """Функция запроса данных у пользователя для добавления"""
@@ -29,7 +28,7 @@ class CRUDmenuMethods:
         print()
         print()
 
-        tuple_of_new_data = self.ui_level_validator._data_entry_logic()
+        tuple_of_new_data = self.ui_level_validator_transaction._get_validated_transaction()
 
         add_date, add_amount, add_type, add_description = tuple_of_new_data
 
@@ -41,12 +40,12 @@ class CRUDmenuMethods:
         print(end="\n\n\n")
 
         # Получаем корректный id
-        id_find = self.ui_level_validator._get_validated_id("Введите id записи, которую хотите изменить: ")
+        id_find = self.ui_level_validator_id._get_validated_id("Введите id записи, которую хотите изменить: ")
 
         print()
 
         # Получаем корректные данные, если они прошли проверки
-        tuple_of_new_data = self.ui_level_validator._data_entry_logic()
+        tuple_of_new_data = self.ui_level_validator_transaction._get_validated_transaction()
         
         changed_date, changed_amount, changed_type, changed_description = tuple_of_new_data
 
@@ -65,7 +64,7 @@ class CRUDmenuMethods:
         print(end="\n\n\n")
         
         # Получаем корректный id
-        id_find = self.ui_level_validator._get_validated_id("Введите id записи, которую хотите удалить: ")
+        id_find = self.ui_level_validator_id._get_validated_id("Введите id записи, которую хотите удалить: ")
 
         print()
 

@@ -2,17 +2,25 @@
 
 ### Импортируем классы и данные, необходимые для запуска ###
 
+from core.core_validators import (ValidateId,
+                                  ValidateDate,
+                                  ValidateAmount,
+                                  ValidateTypeOfOperation
+)
+
 from infrastructure.data_manager import JsonRepository, JsonFormatter
 
-from services.data_service import (
-    TransactionReadService, TransactionWriteService, 
-    TransactionSorter, TransactionCreatorOfNewId
+from services.data_service import (TransactionReadService, 
+                                   TransactionWriteService, 
+                                   TransactionSorter, 
+                                   TransactionCreatorOfNewId
     )
-from services.domain_validator import DomainValidator
 
 # Импорты из ui-слоя
 from ui.ui_crud_methods import CRUDmenuMethods
-from ui.ui_layer_validator import UiValidatorOfInputData
+from ui.ui_layer_validator import (UiValidatorOfInputTransaction, 
+                                   UiValidatorOfInputId, 
+                                   UiValidatorOfMenuChoice)
 
 from ui.ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
 from ui.ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
@@ -40,23 +48,44 @@ def main():
 
     # Собираем в read_service и write_service наш кастомный json-репозиторий и свой сортер для сортировки данных
     read_service = TransactionReadService(repository, sorter)
-    write_service = TransactionWriteService(repository, creator_of_new_id, read_service)
+    write_service = TransactionWriteService(repository, 
+                                            creator_of_new_id, 
+                                            read_service)
 
-    # Инициализируем валидатор
-    validator = DomainValidator()
 
-    # Инициализируем объекты классов файлов ui-слоя
-    ui_level_validator = UiValidatorOfInputData(read_service, validator)
-    crud_menu_methods = CRUDmenuMethods(write_service, validator, ui_level_validator)
+        ########## Объекты всех валидаторов - начало
+    
+
+    # Инициализируем валидаторы файлов core-слоя 
+    core_validator_id = ValidateId()
+    core_validator_date = ValidateDate()
+    core_validator_amount = ValidateAmount()
+    core_validator_type_of_operation = ValidateTypeOfOperation()
+
+    # Инициализируем валидаторы файлов ui-слоя
+    ui_validator_transaction = UiValidatorOfInputTransaction(core_validator_date, 
+                                                             core_validator_amount, 
+                                                             core_validator_type_of_operation)
+    
+    ui_validator_id = UiValidatorOfInputId(read_service, core_validator_id)
+    ui_validator_choice = UiValidatorOfMenuChoice()
+
+
+        ########## Объекты всех валидаторов - конец
+
+
+    crud_menu_methods = CRUDmenuMethods(write_service, 
+                                        ui_validator_transaction, 
+                                        ui_validator_id)
 
     interfaces_menu = ConsoleInterfaceMessages()
     display_data_methods = TransactionsOutputUI()
 
 
     # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
-    general_ui_obj = GeneralUiClass(read_service, validator,
+    general_ui_obj = GeneralUiClass(read_service,
                                     interfaces_menu,
-                                    ui_level_validator,
+                                    ui_validator_choice,
                                     crud_menu_methods,
                                     display_data_methods)
 
