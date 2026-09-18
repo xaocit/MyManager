@@ -7,7 +7,6 @@ class TransactionsOutputUI:
     def _display_transactions(self, list_for_display):
         """Функция красивого вывода данных в прямом или обратном порядке"""
 
-        # Красивый вывод в виде таблицы
         print("-" * 80)
         print(f"{'ID':<5} {'Дата':<12} {'Сумма':<10} {'Тип':<15} {'Описание'}")
         print("-" * 80)

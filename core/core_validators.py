@@ -16,6 +16,7 @@ class ValidateId:
         
         return "Ошибка! Id должен быть числом !!!"
 
+
 class ValidateDate:
     """Класс, реализующий методы по валидации даты"""
 
@@ -35,7 +36,6 @@ class ValidateAmount:
 
     def is_correct_amount(self, new_amount: str) -> Union[str, bool]:
 
-        # Базовые проверки для числа
         if new_amount.lstrip('-').isdigit():
 
             if int(new_amount) > 0:
