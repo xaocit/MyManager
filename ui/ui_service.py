@@ -1,6 +1,4 @@
-### Вспомогательная логика UI
-
-# Импорты
+### Главная логика действий для UI, в которой собираются прочие модули этого слоя
 
 import sys
 from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
@@ -12,30 +10,72 @@ from .ui_layer_validator import UiValidatorOfMenuChoice
 
 from .ui_crud_methods import CRUDmenuMethods
 
-# Конец импортов
 
 ########## РАЗДЕЛЮ КЛАССЫ ПО МОДУЛЯМ ##########
 
 class RunApp:
     """Класс, реализующий методы по запуску потока приложения"""
 
-    def __init__(self, general_ui: GeneralUiClass):
+    def __init__(self, general_ui: GeneralUi):
         self.general_ui = general_ui
 
     def run(self):
         """Вызов главного меню"""
         self.general_ui._stream_program()
 
-class GeneralUiClass:  ## Разбить по классам !!!
-    """Главный ui-класс"""
+class GeneralUi:
+    """Класс, реализующий методы по управлению потоком"""
+
+
+    def __init__(self, menu_controller: ControllerWithMethodsOfMenu):
+        self._menu_controller = menu_controller
+
+    def _get_next_menu(self, name_of_current_menu: str, choosing_next_menu: int):
+        """Метод, возвращающий след. меню для запуска в зависимости от выбора пользователя"""
+
+        current_dict_with_one_name_and_choices = self._menu_controller.get_controller().get(name_of_current_menu)
+
+        if current_dict_with_one_name_and_choices:
+            return current_dict_with_one_name_and_choices.get(choosing_next_menu, f"Не найдено меню с выбором: {choosing_next_menu}")
+
+        return f"Не найден метод меню с именем: {name_of_current_menu}"
+
+    def _validate_type_of_current_menu(self, menu_method_for_validating):
+        """Метод, проверяющий является ли тек. меню - главным, если да - true, если оно меню-опция, то - false"""
+
+        if menu_method_for_validating in self._menu_controller.get_controller():
+            return True
+
+        return False
+
+    def _stream_program(self):
+        """Метод, реализующий беск. цикл программы - безопасное переключение между методами"""
+
+        current_menu = self._menu_controller.get_obj_of_start_menu()
+
+        while True:
+            next_choice = current_menu()
+
+            if self._validate_type_of_current_menu(current_menu.__name__):  ## Если текущее меню - главное, то запоминаем его и идём к след. меню
+                previos_menu = current_menu
+                current_menu = self._get_next_menu(current_menu.__name__, next_choice)
+
+            else:  ## Если нет - просто оставляем тек. меню
+                current_menu = previos_menu
+
+
+class ControllerWithMethodsOfMenu:
+    """Класс, реализующий методы различных меню"""
 
     def __init__(self, read_service: TransactionReadService,
-                 
-                 interfaces_menu: ConsoleInterfaceMessages, 
-                 ui_validator_choice: UiValidatorOfMenuChoice, 
-                 crud_menu_methods: CRUDmenuMethods, 
-                 display_data_methods: TransactionsOutputUI):
+                     
+                     interfaces_menu: ConsoleInterfaceMessages, 
+                     ui_validator_choice: UiValidatorOfMenuChoice, 
+                     crud_menu_methods: CRUDmenuMethods, 
+                     display_data_methods: TransactionsOutputUI,
 
+                     exit_app: QuitApp):
+    
         # Внешние зависимости (объекты классов других слоёв)
         self.read_service = read_service
 
@@ -45,12 +85,14 @@ class GeneralUiClass:  ## Разбить по классам !!!
         self.crud_menu_methods = crud_menu_methods
         self.display_data_methods = display_data_methods
 
-        # Переменная - словарь. Ключ - каждое главное меню, значение - словарь, в котором ключ - цифра, а значение - след. меню
+        self.exit_app = exit_app
+
+        # Ключ - каждое главное меню, значение - словарь, в котором ключ - цифра - выбор, а значение - след. меню
         self._controller = {
             "_menu_main" : {
                 1: self._menu_view,
                 2: self._menu_edit,
-                3: self.exit_application
+                3: self.exit_app._exit_application
             },
             "_menu_view" : {
                 1: self._action_view_direct,
@@ -66,47 +108,12 @@ class GeneralUiClass:  ## Разбить по классам !!!
             }
         }
 
-    def _get_next_menu(self, name_of_current_menu: str, choosing_next_menu: int):
-        """Метод, возвращающий след. меню для запуска в зависимости от выбора пользователя"""
+    def get_controller(self):
+        return self._controller
 
-        current_dict_with_one_name_and_choices = self._controller.get(name_of_current_menu)
-
-        if current_dict_with_one_name_and_choices:
-            return current_dict_with_one_name_and_choices.get(choosing_next_menu, f"Не найдено меню с выбором: {choosing_next_menu}")
-
-        return f"Не найден метод меню с именем: {name_of_current_menu}"
-
-    def _validate_type_of_current_menu(self, menu_method_for_validating):
-        """Метод, проверяющий является ли тек. меню - главным, если да - true, если оно меню-опция, то - false"""
-
-        if menu_method_for_validating in self._controller.keys():
-            return True
-
-        return False
-
-    def _stream_program(self):
-        """Метод, реализующий беск. цикл программы - безопасное переключение между методами"""
-
-        current_menu = self._menu_main
-
-        while True:
-            next_choice = current_menu()
-
-            if self._validate_type_of_current_menu(current_menu.__name__):  ## Если текущее меню - главное, то запоминаем его и идём к след. меню
-                previos_menu = current_menu
-                current_menu = self._get_next_menu(current_menu.__name__, next_choice)
-
-
-            else:  ## Если нет - просто оставляем тек. меню
-                current_menu = previos_menu
-
-    def exit_application(self):
-        """Метод закрытия приложения"""
-
-        print()
-        print("Завершение работы приложения !!!")
-        sys.exit()
-
+    def get_obj_of_start_menu(self):
+        return self._menu_main
+    
     def _action_view_direct(self):
         """Действие: Показ в прямом порядке"""
 
@@ -126,7 +133,6 @@ class GeneralUiClass:  ## Разбить по классам !!!
 
         self.interfaces_menu._menu_main_interface()
 
-        # Валидируем вводимое значение
         my_choice = self.ui_validator_choice._get_validated_my_choice(1, 3)
         print()
 
@@ -137,7 +143,6 @@ class GeneralUiClass:  ## Разбить по классам !!!
 
         self.interfaces_menu._menu_view_interface()
 
-        # Валидируем вводимое значение
         my_choice = self.ui_validator_choice._get_validated_my_choice(1, 4)
         print()
 
@@ -148,7 +153,6 @@ class GeneralUiClass:  ## Разбить по классам !!!
 
         self.interfaces_menu._menu_edit_interface()
 
-        # Валидируем вводимое значение
         my_choice = self.ui_validator_choice._get_validated_my_choice(1, 4)
         print()
 
@@ -176,3 +180,12 @@ class GeneralUiClass:  ## Разбить по классам !!!
             print("НЕТ ДАННЫХ В ФАЙЛЕ ДЛЯ СОРТИРОВКИ!!!")
 
 
+class QuitApp:
+    """Класс, реализующий методы по закрытию приложения"""
+
+    def _exit_application(self):
+        """Метод закрытия приложения"""
+
+        print()
+        print("Завершение работы приложения !!!")
+        sys.exit()

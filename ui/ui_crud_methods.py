@@ -15,6 +15,7 @@ class CRUDmenuMethods:
 
     def __init__(self, write_service: TransactionWriteService,
                  ui_level_validator_transaction: UiValidatorOfInputTransaction, ui_level_validator_id: UiValidatorOfInputId):
+        
         # Внешние зависимости (объекты классов других слоёв)
         self.write_service = write_service
 
@@ -39,17 +40,14 @@ class CRUDmenuMethods:
 
         print(end="\n\n\n")
 
-        # Получаем корректный id
         id_find = self.ui_level_validator_id._get_validated_id("Введите id записи, которую хотите изменить: ")
 
         print()
 
-        # Получаем корректные данные, если они прошли проверки
         tuple_of_new_data = self.ui_level_validator_transaction._get_validated_transaction()
         
         changed_date, changed_amount, changed_type, changed_description = tuple_of_new_data
 
-        # Меняем в списке 1 элемент
         self.write_service.change_data(
             id_find, 
             changed_date, 
@@ -63,12 +61,10 @@ class CRUDmenuMethods:
 
         print(end="\n\n\n")
         
-        # Получаем корректный id
         id_find = self.ui_level_validator_id._get_validated_id("Введите id записи, которую хотите удалить: ")
 
         print()
 
-        # Удаляем в списке 1 элемент
         self.write_service.delete_data(id_find)
 
         print("Успешно удалено.", end="\n\n")

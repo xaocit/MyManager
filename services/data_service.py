@@ -42,7 +42,6 @@ class TransactionReadService:
 
         transactions = self.repository.load_all()
 
-        # Перебираем в цикле каждую транзакцию, ища нужную
         for i, transaction in enumerate(transactions):
             if find_id == transaction.id:
                 return (True, i)
@@ -149,7 +148,6 @@ class TransactionSorter(ISorter):
         # Преобразуем номера в имена полей
         fields_for_sorting = [available_fields[i-1] for i in field_indicies]
         
-        # Создаем ключ для сортировки
         def makeSortKey(item):
             # Получаем значения выбранных полей в виде кортежа
             return tuple(getattr(item, field) for field in fields_for_sorting)

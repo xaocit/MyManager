@@ -25,7 +25,7 @@ from ui.ui_layer_validator import (UiValidatorOfInputTransaction,
 from ui.ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
 from ui.ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
 
-from ui.ui_service import GeneralUiClass, RunApp
+from ui.ui_service import ControllerWithMethodsOfMenu, GeneralUi, RunApp, QuitApp
 
 from config import DATA_FILE_PATH
 
@@ -82,16 +82,23 @@ def main():
     display_data_methods = TransactionsOutputUI()
 
 
-    # Собираем все предыдущие объекты (service, validator) в классе по работе с консольным UI
-    general_ui_obj = GeneralUiClass(read_service,
-                                    interfaces_menu,
-                                    ui_validator_choice,
-                                    crud_menu_methods,
-                                    display_data_methods)
+    # Собираем и создаём все нужные объекты для главного модуля ui.
+
+    quit_app = QuitApp()
+
+    menu_controller = ControllerWithMethodsOfMenu(read_service,
+                                                  interfaces_menu,
+                                                  ui_validator_choice,
+                                                  crud_menu_methods,
+                                                  display_data_methods,
+                                                  quit_app)
+
+    # Объект по управлению потоком
+    general_ui = GeneralUi(menu_controller)
 
     # Запускаем приложение включением ui
 
-    execute_app = RunApp(general_ui_obj)
+    execute_app = RunApp(general_ui)
     execute_app.run()
 
 

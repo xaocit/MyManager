@@ -13,12 +13,13 @@ from services.data_service import TransactionReadService  # Зависим от 
 
 
 class UiValidatorOfInputTransaction:
-    """Класс, реализующий простую валидацию различных вводимых значений в различных сценариях на уровне ui-слоя"""
+    """Класс, реализующий простую валидацию при вводе нового или изменения значения в бд"""
 
     def __init__(self, 
                  validator_date: ValidateDate, 
                  validator_amount: ValidateAmount, 
                  validator_type_of_operation: ValidateTypeOfOperation):
+        
         # Внешние зависимости (объекты классов других файлов)
 
         self._validator_date = validator_date
@@ -28,14 +29,12 @@ class UiValidatorOfInputTransaction:
 
     def is_correct_count_of_values(self, string_of_data: str, count_fields: int) -> Union[str, bool]:
         """Метод для валидации кол-ва переданных значений через пробел"""
-        # Количество пробелов между полями
+
         count_of_spaces = count_fields - 1
 
-        # Пытаемся распаковать строку
         if len(string_of_data.split(None, count_of_spaces)) != count_fields:
             return f"Ошибка! Вы должны передать {count_fields} значений через пробел !!!"
 
-        # Если всё хорошо
         return True
 
     
