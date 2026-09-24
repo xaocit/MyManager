@@ -25,20 +25,20 @@ from ui.ui_layer_validator import (UiValidatorOfInputTransaction,
 from ui.ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
 from ui.ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
 
-from ui.ui_service import ControllerWithMethodsOfMenu, GeneralUi, RunApp, QuitApp
+from ui.ui_service import GeneralUi, MenuRegistry, MenuActions, QuitApp, ExitApp
 
 from config import DATA_FILE_PATH
 
 ### Конец импорта ###
 
-def main():
-    """Главная Функция, где собираем зависимости и запускаем ui - интерфейс"""
+def build(data_file_path):
+    """Функция, собирающая приложение"""
 
     # Класс форматирования списка из вида python в вид, характерный для .json - файла, и наоборот
     formatter = JsonFormatter()
 
     # Собираем в репозитории наш путь к файлу бд и логику форматирования (перевода) данных в formatter
-    repository = JsonRepository(DATA_FILE_PATH, formatter)
+    repository = JsonRepository(data_file_path, formatter)
 
     # Инициализируем объект сортера
     sorter = TransactionSorter()
@@ -64,8 +64,8 @@ def main():
 
     # Инициализируем валидаторы файлов ui-слоя
     ui_validator_transaction = UiValidatorOfInputTransaction(core_validator_date, 
-                                                             core_validator_amount, 
-                                                             core_validator_type_of_operation)
+                                                            core_validator_amount, 
+                                                            core_validator_type_of_operation)
     
     ui_validator_id = UiValidatorOfInputId(read_service, core_validator_id)
     ui_validator_choice = UiValidatorOfMenuChoice()
@@ -86,20 +86,30 @@ def main():
 
     quit_app = QuitApp()
 
-    menu_controller = ControllerWithMethodsOfMenu(read_service,
-                                                  interfaces_menu,
-                                                  ui_validator_choice,
-                                                  crud_menu_methods,
-                                                  display_data_methods,
-                                                  quit_app)
+
+    menu_actions = MenuActions(read_service,
+                               display_data_methods,
+                               interfaces_menu,
+                               ui_validator_choice)
+    
+    menu_controller = MenuRegistry(crud_menu_methods,
+                                   menu_actions,
+                                   quit_app)
 
     # Объект по управлению потоком
-    general_ui = GeneralUi(menu_controller)
+    return GeneralUi(menu_controller)
 
-    # Запускаем приложение включением ui
+def main():
+    """Главная Функция, где получаем собранные зависимости и запускаем ui - интерфейс"""
 
-    execute_app = RunApp(general_ui)
-    execute_app.run()
+    
+    execute_app = build(data_file_path=DATA_FILE_PATH)
+
+    try:
+        execute_app.stream_program()
+
+    except ExitApp:
+        pass
 
 
 if __name__ == "__main__":

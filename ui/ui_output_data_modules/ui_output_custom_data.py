@@ -4,7 +4,7 @@
 class TransactionsOutputUI:
     """Класс, реализующий методы по выводу данных в интерфейс ui"""
 
-    def _display_transactions(self, list_for_display):
+    def display_transactions(self, list_for_display):
         """Функция красивого вывода данных в прямом или обратном порядке"""
 
         print("-" * 80)
