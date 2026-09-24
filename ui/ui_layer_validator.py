@@ -9,7 +9,7 @@ from core.core_validators import (
     ValidateTypeOfOperation
 )
 
-from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
+from services.interfaces import ITransactionReadService
 
 
 class UiValidatorOfInputTransaction:

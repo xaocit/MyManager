@@ -2,8 +2,11 @@
 
 from typing import List, Union
 
+
 from core.entities import StructDataOfTransaction
-from core.interfaces import IRepository, ISorter, ICreatorOfNewId
+
+from .interfaces import (IRepository, ISorter, ICreatorOfNewId,
+                         ITransactionReadService, ITransactionWriteService)
 
 
 class TransactionReadService:
@@ -49,7 +52,7 @@ class TransactionReadService:
         return (False, None)
 
 
-class TransactionWriteService:
+class TransactionWriteService():
     """Класс, реализующий методы для изменения данных (CUD) в списке транзакций"""
 
     def __init__(self, repository: IRepository, creator_of_new_id: ICreatorOfNewId,

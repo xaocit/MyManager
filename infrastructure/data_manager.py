@@ -6,8 +6,13 @@
 import commentjson, pathlib
 from typing import List
 
-from core.interfaces import IRepository, IDataFormatter
+
 from core.entities import StructDataOfTransaction
+
+from services.interfaces import IRepository
+
+from .interfaces import IDataFormatter
+
 
 # Конец импортов
 

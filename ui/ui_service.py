@@ -1,7 +1,7 @@
 ### Главная логика действий для UI, в которой собираются прочие модули этого слоя
 
 import sys
-from services.data_service import TransactionReadService  # Зависим от конкретных реализаций !!!
+from services.interfaces import ITransactionReadService
 
 from .ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
 from .ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
@@ -67,7 +67,7 @@ class GeneralUi:
 class ControllerWithMethodsOfMenu:
     """Класс, реализующий методы различных меню"""
 
-    def __init__(self, read_service: TransactionReadService,
+    def __init__(self, read_service: ITransactionReadService,
                      
                      interfaces_menu: ConsoleInterfaceMessages, 
                      ui_validator_choice: UiValidatorOfMenuChoice, 

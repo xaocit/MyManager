@@ -7,13 +7,13 @@ if TYPE_CHECKING:
     from ui_layer_validator import UiValidatorOfInputTransaction, UiValidatorOfInputId
 ######
 
-from services.data_service import TransactionWriteService  # Зависим от конкретных реализаций !!!
+from services.interfaces import ITransactionWriteService
 
 
 class CRUDmenuMethods:
     """Класс, реализующий методы по запросу данных и выполнения этих операций для изменения бд"""
 
-    def __init__(self, write_service: TransactionWriteService,
+    def __init__(self, write_service: ITransactionWriteService,
                  ui_level_validator_transaction: UiValidatorOfInputTransaction, ui_level_validator_id: UiValidatorOfInputId):
         
         # Внешние зависимости (объекты классов других слоёв)
