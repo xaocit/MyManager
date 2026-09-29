@@ -1,6 +1,6 @@
 ### Файл с утилитами для функций бд (сервисы)
 
-from typing import List, Union
+from typing import List, Optional
 
 
 from core.entities import StructDataOfTransaction
@@ -38,7 +38,7 @@ class TransactionReadService:
         # Иначе возвращаем просто список транзакций
         return transactions
 
-    def get_data_by_id(self, find_id: int) -> tuple[bool, Union[int | None]]:
+    def get_data_by_id(self, find_id: int) -> tuple[bool, Optional[int]]:
         """Метод, возвращающий кортеж, в котором 1-й элемент bool-значение:
         т. е. есть ли запись с find_id или нет; 
         а 2-й элемент - индекс найденной записи или None, если не нашли"""
@@ -72,19 +72,19 @@ class TransactionWriteService():
         # Определяем id для новой записи
         new_id = self.creator_of_new_id.create_new_id(transactions)
 
-        new_Transaction = StructDataOfTransaction(
+        new_transaction = StructDataOfTransaction(
             id=new_id,
             date=new_date,
-            amount=new_amount,
+            amount=float(new_amount),
             typeOp=new_type_op,
             description=new_description
         )
 
-        transactions.append(new_Transaction)
+        transactions.append(new_transaction)
 
         self.repository.save_all(transactions)
 
-        return new_Transaction
+        return new_transaction
 
     def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description):
         """Метод, позволяющий изменить существующую строку в бд"""
@@ -151,8 +151,8 @@ class TransactionSorter(ISorter):
         # Преобразуем номера в имена полей
         fields_for_sorting = [available_fields[i-1] for i in field_indicies]
         
-        def makeSortKey(item):
+        def make_sort_key(item):
             # Получаем значения выбранных полей в виде кортежа
             return tuple(getattr(item, field) for field in fields_for_sorting)
         
-        return sorted(data, key=makeSortKey)
+        return sorted(data, key=make_sort_key)

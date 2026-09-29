@@ -3,7 +3,7 @@
 
 # Импорты
 
-import commentjson, pathlib
+import json, pathlib
 from typing import List
 
 
@@ -24,14 +24,24 @@ class JsonFormatter(IDataFormatter):
 
         transactions_data = data.get("transactions", [])
 
-        return [StructDataOfTransaction.from_dict(item) for item in transactions_data]
-
+        return [StructDataOfTransaction(id=item["id"],
+                                        date=item["date"],
+                                        amount=float(item["amount"]),
+                                        typeOp=item["typeOp"],
+                                        description=item["description"]) for item in transactions_data]
+    
     def to_dict(self, transactions: List[StructDataOfTransaction]) -> dict:
         """Преобразование списка в словарь для JSON"""
 
         return {
             "transactions" : [
-                transaction.to_dict() for transaction in transactions
+                {
+                    "id": transaction.id,
+                    "date": transaction.date,
+                    "amount": transaction.amount,
+                    "typeOp": transaction.typeOp,
+                    "description": transaction.description
+                } for transaction in transactions
             ]
         }
 
@@ -57,15 +67,15 @@ class JsonRepository(IRepository):
                 return []
 
             with open(self.file_path, 'r', encoding="utf-8") as file:
-                data = commentjson.load(file)
+                data = json.load(file)
 
             # Преобразуем JSON в список транзакций
             return self.formatter.from_dict(data)
 
         ## Какие-то исключения
         except Exception as e:
-            print(f"!!! Неизвестная ошибка: {e}")
-            return []  # ✅ Всегда возвращаем список
+            print(f"Ошибка! Загрузка базы данных не удалась: {e}")
+            raise  # ✅ Всегда возвращаем список
 
     def save_all(self, transactions: List[StructDataOfTransaction]) -> None:
         """Сохранение транзакций в JSON файле"""
@@ -76,7 +86,7 @@ class JsonRepository(IRepository):
 
             # Записываем словарик в файл
             with open(self.file_path, 'w', encoding='utf-8') as file:
-                commentjson.dump(
+                json.dump(
                     data,
                     file,
                     indent=4,            # Красивое форматирование
@@ -84,5 +94,6 @@ class JsonRepository(IRepository):
                     sort_keys=False      # Без сортировки ключей
                 )
 
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Ошибка! Файл не сохранён по причине: {e}")
+            raise

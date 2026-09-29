@@ -158,17 +158,21 @@ class MenuActions:
     def _menu_sort(self):
         """Функция вывода отсортированного списка"""
 
-        print("""Введите 1 цифру или последовательность цифр, 
-    которые будут указывать сколько полей и в каком порядке отсортировать (Например,
-    "1 4 3" означает, что сортируем по 1-му полю, если значения совпадают, то
-    затем сортируем по 4-му полю, если и они совпадают, то по 3-му полю сортируем): """, end="\n\n")
+        prompt = (
+            "Введите 1 цифру или последовательность цифр, "
+            "которые будут указывать сколько полей и в каком порядке отсортировать (Например,"
+            "'1 4 3' означает, что сортируем по 1-му полю, если значения совпадают, то"
+            "затем сортируем по 4-му полю, если и они совпадают, то по 3-му полю сортируем): "
+        )
+
+        print(prompt, end="\n\n")
         
         # Получаем номера полей от пользователя
-        masForSorting = list(map(int, input().split()))
+        mas_for_sorting = list(map(int, input().split()))
         print()
 
         if self.read_service.get_all() != []:
-            result = self.read_service.get_sorted(masForSorting)
+            result = self.read_service.get_sorted(mas_for_sorting)
 
             self.display_data_methods.display_transactions(result)
 
@@ -183,7 +187,8 @@ class ExitApp(Exception):
 class QuitApp:
     """Класс, реализующий методы по закрытию приложения"""
 
-    def _exit_application(self):
+    @staticmethod
+    def _exit_application():
         """Метод закрытия приложения"""
 
         print()

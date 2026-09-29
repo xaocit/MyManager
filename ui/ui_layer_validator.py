@@ -77,7 +77,8 @@ class UiValidatorOfInputTransaction:
                 my_new_data_in_bd = self._read_raw_input()
 
                 # 1. Валидируем кол-во значений
-                result_validation_of_count_values = self.is_correct_count_of_values(my_new_data_in_bd, 4)
+                expected_fields_count = 4
+                result_validation_of_count_values = self.is_correct_count_of_values(my_new_data_in_bd, expected_fields_count)
 
                 #1.1. Если не прошли валидацию по кол-ву - заново запрашиваем ввод
                 if isinstance(result_validation_of_count_values, str):

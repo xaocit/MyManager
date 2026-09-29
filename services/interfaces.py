@@ -50,13 +50,13 @@ class ITransactionReadService(ABC):
 class ITransactionWriteService(ABC):
 
     @abstractmethod
-    def get_all(self, reverse=False) -> List[StructDataOfTransaction]:
+    def add(self, new_date, new_amount, new_type_op, new_description) -> StructDataOfTransaction:
+        pass   
+            
+    abstractmethod
+    def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description):
         pass
-
+        
     @abstractmethod
-    def get_sorted(self, field_indicies: List[int]) -> List[StructDataOfTransaction]:
-        pass
-
-    @abstractmethod
-    def get_data_by_id(self, find_id: int) -> tuple[bool, Union[int | None]]:
+    def delete_data(self, find_id):
         pass
