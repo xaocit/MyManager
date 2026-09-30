@@ -4,10 +4,12 @@ from typing import Union
 import re
 from datetime import datetime
 
+
 class ValidateId:
     """Класс для валидации id"""
 
-    def is_correct_id(self, id: str) -> Union[str, bool]:
+    @staticmethod
+    def is_correct_id(id: str) -> Union[str, bool]:
 
         if id.isdigit():
             if int(id) >= 0:
@@ -23,6 +25,7 @@ class ValidateDate:
 
     _date_format = r'\d{2}\.\d{2}\.\d{4}' # Формат даты
 
+    @classmethod
     def is_correct_date(self, new_date: str) -> Union[str, bool]:
 
         # Проверяем соответствие формату через рег. выр.
@@ -41,6 +44,7 @@ class ValidateDate:
 class ValidateAmount:
     """Класс, реализующий методы по валидации Суммы"""
 
+    @staticmethod
     def is_correct_amount(self, new_amount: str) -> Union[str, bool]:
 
         try:
@@ -57,6 +61,7 @@ class ValidateAmount:
 class ValidateTypeOfOperation:
     """Класс, реализующий методы по валидации типа операции"""
 
+    @staticmethod
     def is_correct_type_of_operation(self, new_operation: str) -> Union[str, bool]:
 
         if new_operation in ("expense", "income"):
