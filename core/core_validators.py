@@ -23,20 +23,14 @@ class ValidateId:
 class ValidateDate:
     """Класс, реализующий методы по валидации даты"""
 
-    _date_format = r'\d{2}\.\d{2}\.\d{4}' # Формат даты
-
-    @classmethod
-    def is_correct_date(self, new_date: str) -> Union[str, bool]:
-
-        # Проверяем соответствие формату через рег. выр.
-        if not bool(re.match(self._date_format, new_date)):
-            return "Ошибка! Неверный формат даты !!!"
+    @staticmethod
+    def is_correct_date(new_date: str) -> Union[str, bool]:
 
         try:
             datetime.strptime(new_date, "%d.%m.%Y")
             
-        except ValueError:
-            return "Ошибка! Такой даты не существует !!!"
+        except ValueError as e:
+            return "Ошибка! Неверный формат введённой даты или её не существует !!!"
 
         return True
 
@@ -45,7 +39,7 @@ class ValidateAmount:
     """Класс, реализующий методы по валидации Суммы"""
 
     @staticmethod
-    def is_correct_amount(self, new_amount: str) -> Union[str, bool]:
+    def is_correct_amount(new_amount: str) -> Union[str, bool]:
 
         try:
             value = float(new_amount)
@@ -62,7 +56,7 @@ class ValidateTypeOfOperation:
     """Класс, реализующий методы по валидации типа операции"""
 
     @staticmethod
-    def is_correct_type_of_operation(self, new_operation: str) -> Union[str, bool]:
+    def is_correct_type_of_operation(new_operation: str) -> Union[str, bool]:
 
         if new_operation in ("expense", "income"):
             return True

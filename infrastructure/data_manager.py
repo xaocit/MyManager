@@ -48,7 +48,7 @@ class JsonFormatter(IDataFormatter):
 class JsonRepository(IRepository):
     """Класс-репозиторий для оперирования со списком транзакций и файлом .json"""
 
-    def __init__(self, file_path: str, formatter: IDataFormatter):
+    def __init__(self, file_path: str | pathlib.Path, formatter: IDataFormatter):
 
         self.file_path = pathlib.Path(file_path)
         self.formatter = formatter
