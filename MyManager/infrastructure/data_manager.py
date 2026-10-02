@@ -7,11 +7,11 @@ import json, pathlib
 from typing import List
 
 
-from core.entities import StructDataOfTransaction
+from MyManager.core.entities import StructDataOfTransaction
 
-from services.interfaces import IRepository
+from MyManager.services.interfaces import IRepository
 
-from .interfaces import IDataFormatter
+from MyManager.infrastructure.interfaces import IDataFormatter
 
 
 # Конец импортов

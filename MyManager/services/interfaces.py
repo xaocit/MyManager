@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List, Union
 
 
-from core.entities import StructDataOfTransaction
+from MyManager.core.entities import StructDataOfTransaction
 
 
 class IRepository(ABC):

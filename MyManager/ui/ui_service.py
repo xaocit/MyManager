@@ -1,7 +1,7 @@
 ### Главная логика действий для UI, в которой собираются прочие модули этого слоя
 
 import sys
-from services.interfaces import ITransactionReadService
+from MyManager.services.interfaces import ITransactionReadService
 
 from .ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
 from .ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages

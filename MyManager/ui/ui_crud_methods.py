@@ -4,10 +4,10 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ui_layer_validator import UiValidatorOfInputTransaction, UiValidatorOfInputId
+    from MyManager.ui.ui_layer_validator import UiValidatorOfInputTransaction, UiValidatorOfInputId
 ######
 
-from services.interfaces import ITransactionWriteService
+from MyManager.services.interfaces import ITransactionWriteService
 
 
 class CRUDmenuMethods:

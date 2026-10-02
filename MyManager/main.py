@@ -1,10 +1,10 @@
 # Главный файл, где собираем и запускаем сборку проекта (Точка входа)
 
-from ui.ui_service import ExitApp
+from MyManager.ui.ui_service import ExitApp
 
-from composition_build import build
+from MyManager.composition_build import build
 
-from config import DATA_FILE_PATH
+from MyManager.config import DATA_FILE_PATH
 
 
 def main():

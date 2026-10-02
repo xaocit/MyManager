@@ -2,32 +2,32 @@
 
 ### Импортируем классы и данные, необходимые для запуска ###
 
-from core.core_validators import (ValidateId,
+from MyManager.core.core_validators import (ValidateId,
                                   ValidateDate,
                                   ValidateAmount,
                                   ValidateTypeOfOperation
 )
 
-from infrastructure.data_manager import JsonRepository, JsonFormatter
+from MyManager.infrastructure.data_manager import JsonRepository, JsonFormatter
 
-from services.data_service import (TransactionReadService, 
+from MyManager.services.data_service import (TransactionReadService, 
                                    TransactionWriteService, 
                                    TransactionSorter, 
                                    TransactionCreatorOfNewId
     )
 
 # Импорты из ui-слоя
-from ui.ui_crud_methods import CRUDmenuMethods
-from ui.ui_layer_validator import (UiValidatorOfInputTransaction, 
+from MyManager.ui.ui_crud_methods import CRUDmenuMethods
+from MyManager.ui.ui_layer_validator import (UiValidatorOfInputTransaction, 
                                    UiValidatorOfInputId, 
                                    UiValidatorOfMenuChoice)
 
-from ui.ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
-from ui.ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
+from MyManager.ui.ui_output_data_modules.ui_output_common_data import ConsoleInterfaceMessages
+from MyManager.ui.ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
 
-from ui.ui_service import GeneralUi, MenuRegistry, MenuActions, QuitApp, ExitApp
+from MyManager.ui.ui_service import GeneralUi, MenuRegistry, MenuActions, QuitApp, ExitApp
 
-from config import DATA_FILE_PATH
+from MyManager.config import DATA_FILE_PATH
 
 ### Конец импорта ###
 

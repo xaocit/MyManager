@@ -2,14 +2,14 @@
 
 from typing import Union
 
-from core.core_validators import (
+from MyManager.core.core_validators import (
     ValidateId,
     ValidateDate,
     ValidateAmount,
     ValidateTypeOfOperation
 )
 
-from services.interfaces import ITransactionReadService
+from MyManager.services.interfaces import ITransactionReadService
 
 
 class UiValidatorOfInputTransaction:

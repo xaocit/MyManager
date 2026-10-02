@@ -3,7 +3,7 @@
 from typing import List, Optional
 
 
-from core.entities import StructDataOfTransaction
+from MyManager.core.entities import StructDataOfTransaction
 
 from .interfaces import (IRepository, ISorter, ICreatorOfNewId,
                          ITransactionReadService, ITransactionWriteService)
