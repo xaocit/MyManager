@@ -13,11 +13,33 @@ def json_repo(tmp_path):
 
 
 @pytest.fixture
-def sample_transactions():
+def sample_transactions_list():
 
     return [
-        StructDataOfTransaction(id="1", date="01.01.2024", amount=100.0,
+        StructDataOfTransaction(id=1, date="01.01.2024", amount=100.0,
                                 typeOp="income",  description="зарплата"),
-        StructDataOfTransaction(id="2", date="02.01.2024", amount=50.5,
+        StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
                                 typeOp="expense", description="кофе"),
     ]
+
+@pytest.fixture
+def sample_transactions_dict():
+
+    return {
+            "transactions": [
+                {
+                    "id": 1,
+                    "date": "01.01.2024",
+                    "amount": 100.0,
+                    "typeOp": "income",
+                    "description": "зарплата"
+                },
+                {
+                   "id": 2,
+                    "date": "02.01.2024",
+                    "amount": 50.5,
+                    "typeOp": "expense",
+                    "description": "кофе" 
+                }
+            ]
+        }
