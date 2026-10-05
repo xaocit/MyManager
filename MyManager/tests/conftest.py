@@ -2,15 +2,14 @@
 
 import pytest
 
-from ...core.entities import StructDataOfTransaction
+from MyManager.core.entities import StructDataOfTransaction
 
-from ...infrastructure.data_manager import JsonRepository, JsonFormatter
+from MyManager.infrastructure.data_manager import JsonRepository, JsonFormatter
 
 
 @pytest.fixture
 def json_repo(tmp_path):
     return JsonRepository(tmp_path / "expenses.json", JsonFormatter())
-
 
 @pytest.fixture
 def sample_transactions_list():
