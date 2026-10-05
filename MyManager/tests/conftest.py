@@ -19,6 +19,8 @@ def sample_transactions_list():
                                 typeOp="income",  description="зарплата"),
         StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
                                 typeOp="expense", description="кофе"),
+        StructDataOfTransaction(id=3, date="02.01.2024", amount=550.0,
+                                typeOp="expense", description="Стрижка в парикмахерской"),
     ]
 
 @pytest.fixture
@@ -39,6 +41,13 @@ def sample_transactions_dict():
                     "amount": 50.5,
                     "typeOp": "expense",
                     "description": "кофе" 
+                },
+                {
+                    "id": 3,
+                    "date": "02.01.2024",
+                    "amount": 550.0,
+                    "typeOp": "expense",
+                    "description": "Стрижка в парикмахерской" 
                 }
             ]
         }
