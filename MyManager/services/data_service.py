@@ -9,7 +9,7 @@ from .interfaces import (IRepository, ISorter, ICreatorOfNewId,
                          ITransactionReadService, ITransactionWriteService)
 
 
-class TransactionReadService:
+class TransactionReadService(ITransactionReadService):
     """Класс, реализующий методы для чтения данных из списка транзакций в разных вариациях"""
 
     def __init__(self, repository: IRepository, sorter: List[ISorter] = None):
@@ -52,7 +52,7 @@ class TransactionReadService:
         return (False, None)
 
 
-class TransactionWriteService():
+class TransactionWriteService(ITransactionWriteService):
     """Класс, реализующий методы для изменения данных (CUD) в списке транзакций"""
 
     def __init__(self, repository: IRepository, creator_of_new_id: ICreatorOfNewId,
