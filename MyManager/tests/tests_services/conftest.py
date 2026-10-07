@@ -19,11 +19,11 @@ def read_service_without_bd(json_repo):
     return TransactionReadService(json_repo, TransactionSorter())
 
 @pytest.fixture
-def write_service_with_bd(json_repo, sample_transactions_list):
+def write_service_with_bd(json_repo, read_service_with_bd, sample_transactions_list):
     json_repo.save_all(sample_transactions_list)
-    return TransactionWriteService(json_repo, TransactionCreatorOfNewId(), read_service_with_bd())
+    return TransactionWriteService(json_repo, TransactionCreatorOfNewId(), read_service_with_bd)
 
 @pytest.fixture
 def write_service_without_bd(json_repo, read_service_without_bd):
     json_repo.save_all([])
-    return TransactionWriteService(json_repo, TransactionCreatorOfNewId(), read_service_without_bd())
+    return TransactionWriteService(json_repo, TransactionCreatorOfNewId(), read_service_without_bd)

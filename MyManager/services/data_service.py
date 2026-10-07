@@ -65,7 +65,8 @@ class TransactionWriteService(ITransactionWriteService):
         self.creator_of_new_id = creator_of_new_id
 
     def add(self, new_date, new_amount, new_type_op, new_description) -> StructDataOfTransaction:
-        """Логика добавления новой записи в бд"""
+        """Логика добавления новой записи в бд.
+        Предполагается, что остальные данные валидны"""
 
         transactions = self.repository.load_all()
 
@@ -87,7 +88,8 @@ class TransactionWriteService(ITransactionWriteService):
         return new_transaction
 
     def change_data(self, find_id, changed_date, changed_amount, changed_type_op, changed_description):
-        """Метод, позволяющий изменить существующую строку в бд"""
+        """Метод, позволяющий изменить существующую строку в бд.
+        Предполагается, что переданный id существует и остальные данные валидны"""
 
         # Используем метод get_data_by_id из этого же класса для
         # получение индекса найденной записи, чтобы по нему заменить данные
