@@ -1,1 +1,1 @@
-DATA_FILE_PATH = "MyDataBase.jsonc"
+DATA_FILE_PATH = "MyDataBase.json"

@@ -50,7 +50,16 @@ class JsonRepository(IRepository):
 
     def __init__(self, file_path: str | pathlib.Path, formatter: IDataFormatter):
 
-        self.file_path = pathlib.Path(file_path)
+        # Получаем абсолютный путь к файлу
+        current_file = pathlib.Path(__file__).resolve()
+
+        # Поднимаемся на уровень вверх
+        project_root = current_file.parent.parent
+
+        # Соединяем корень проекта именем файла
+        self.file_path = project_root / file_path
+
+
         self.formatter = formatter
 
         # Убедимся, есть ли папка для файла
