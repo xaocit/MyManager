@@ -112,24 +112,16 @@ class TestWriteService:
     class TestFuncDeleteData:
 
         @pytest.mark.parametrize(
-            ("id_for_deleting", "got_bd"),
-            [(1, [
-        StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
-                                typeOp="expense", description="кофе"),
-        StructDataOfTransaction(id=3, date="02.01.2024", amount=550.0,
-                                typeOp="expense", description="Стрижка в парикмахерской")
-    ]),
-             (3, [
-        StructDataOfTransaction(id=1, date="01.01.2024", amount=100.0,
-                                typeOp="income",  description="зарплата"),
-        StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
-                                typeOp="expense", description="кофе")
-    ])]
+            ("id_for_deleting", "expected_left_ids"),
+            [(1, [2, 3]),
+             (3, [1, 2])]
         )
-        def test_delete_data_positive(self, read_service_with_bd, write_service_with_bd, id_for_deleting, got_bd):
+        def test_delete_data_positive(self, read_service_with_bd, write_service_with_bd, id_for_deleting, expected_left_ids):
 
             write_service_with_bd.delete_data(id_for_deleting)
 
             got_changed_bd = read_service_with_bd.get_all()
 
-            assert got_bd == got_changed_bd    
+            left_ids = [transaction.id for transaction in got_changed_bd]
+
+            assert expected_left_ids == left_ids

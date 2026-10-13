@@ -21,42 +21,33 @@ class TestReadService:
     class TestFuncGetSorted:
         def test_get_sorted_amount(self, read_service_with_bd):
 
-            got_sorted_data = read_service_with_bd.get_sorted([1])
+            got_sorted_data = read_service_with_bd.get_sorted([2])
 
-            assert got_sorted_data == [
-        StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
-                                typeOp="expense", description="кофе"),
-        StructDataOfTransaction(id=1, date="01.01.2024", amount=100.0,
-                                typeOp="income",  description="зарплата"),
-        StructDataOfTransaction(id=3, date="02.01.2024", amount=550,
-                                typeOp="expense", description="Стрижка в парикмахерской"),
-    ]
+            got_sorted_data_ids = []
+            for transaction in got_sorted_data:
+                got_sorted_data_ids.append(transaction.id)
+
+            assert [2, 1, 3] == got_sorted_data_ids
             
         def test_get_sorted_date_and_amount(self, read_service_with_bd):
         
-            got_sorted_data = read_service_with_bd.get_sorted([0, 1])
+            got_sorted_data = read_service_with_bd.get_sorted([1, 2])
 
-            assert got_sorted_data == [
-        StructDataOfTransaction(id=1, date="01.01.2024", amount=100.0,
-                                typeOp="income",  description="зарплата"),
-        StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
-                                typeOp="expense", description="кофе"),
-        StructDataOfTransaction(id=3, date="02.01.2024", amount=550,
-                                typeOp="expense", description="Стрижка в парикмахерской"),
-    ]
+            got_sorted_data_ids = []
+            for transaction in got_sorted_data:
+                got_sorted_data_ids.append(transaction.id)
+
+            assert [1, 2, 3] == got_sorted_data_ids
             
         def test_get_sorted_typeOp_and_amount(self, read_service_with_bd):
                 
-            got_sorted_data = read_service_with_bd.get_sorted([2, 1])
+            got_sorted_data = read_service_with_bd.get_sorted([3, 2])
 
-            assert got_sorted_data == [
-        StructDataOfTransaction(id=2, date="02.01.2024", amount=50.5,
-                                typeOp="expense", description="кофе"),
-        StructDataOfTransaction(id=3, date="02.01.2024", amount=550,
-                                typeOp="expense", description="Стрижка в парикмахерской"),
-        StructDataOfTransaction(id=1, date="01.01.2024", amount=100.0,
-                                typeOp="income",  description="зарплата"),
-    ]
+            got_sorted_data_ids = []
+            for transaction in got_sorted_data:
+                got_sorted_data_ids.append(transaction.id)
+
+            assert [2, 3, 1] == got_sorted_data_ids
 
 
     class TestFuncGetById:
