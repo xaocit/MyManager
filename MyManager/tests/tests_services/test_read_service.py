@@ -1,5 +1,7 @@
 ### Тесты для сервиса-чтения транзакций
 
+import pytest
+from datetime import datetime
 
 from MyManager.core.entities import StructDataOfTransaction
 
@@ -19,35 +21,25 @@ class TestReadService:
 
 
     class TestFuncGetSorted:
-        def test_get_sorted_amount(self, read_service_with_bd):
 
-            got_sorted_data = read_service_with_bd.get_sorted([2])
+        KEYS = {
+            1: lambda t: datetime.strptime(t.date, "%d.%m.%Y"),
+            2: lambda t: t.amount,
+            3: lambda t: t.typeOp,
+        }
 
-            got_sorted_data_ids = []
-            for transaction in got_sorted_data:
-                got_sorted_data_ids.append(transaction.id)
+        @pytest.mark.parametrize("fields", [
+            [1], 
+            [2],
+            [1, 2],
+            [3, 1],
+            [3, 2, 1]
+        ])
+        def test_sorted_matches_reference(self, read_service_with_bd, sample_transactions_list, fields):
 
-            assert [2, 1, 3] == got_sorted_data_ids
-            
-        def test_get_sorted_date_and_amount(self, read_service_with_bd):
-        
-            got_sorted_data = read_service_with_bd.get_sorted([1, 2])
+            expected = sorted(sample_transactions_list, key=lambda t: tuple(self.KEYS[item](t) for item in fields))
 
-            got_sorted_data_ids = []
-            for transaction in got_sorted_data:
-                got_sorted_data_ids.append(transaction.id)
-
-            assert [1, 2, 3] == got_sorted_data_ids
-            
-        def test_get_sorted_typeOp_and_amount(self, read_service_with_bd):
-                
-            got_sorted_data = read_service_with_bd.get_sorted([3, 2])
-
-            got_sorted_data_ids = []
-            for transaction in got_sorted_data:
-                got_sorted_data_ids.append(transaction.id)
-
-            assert [2, 3, 1] == got_sorted_data_ids
+            assert [t.id for t in read_service_with_bd.get_sorted(fields)] == [t.id for t in expected]
 
 
     class TestFuncGetById:

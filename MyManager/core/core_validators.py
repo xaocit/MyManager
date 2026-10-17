@@ -26,15 +26,15 @@ class ValidateDate:
     @staticmethod
     def is_correct_date(new_date: str) -> Union[str, bool]:
 
+        format_of_date = r'\d{2}\.\d{2}\.\d{4}'
+        if not bool(re.match(format_of_date, new_date)):
+            return "Ошибка! Неверный формат введённой даты !!!"
+
         try:
-            format_of_date = r'/d{2}/./d{2}/./d{4}/'
-            if not bool(re.match(format_of_date, new_date)):
-                raise ValueError("Неверный формат введённой даты или её не существует !!!")
-            
             datetime.strptime(new_date, "%d.%m.%Y")
             
-        except ValueError as e:
-            return f"Ошибка! {e}"
+        except ValueError:
+            return f"Ошибка! Такой даты не существует !!!"
 
         return True
 
