@@ -26,14 +26,6 @@ class UiValidatorOfInputTransaction:
         self._validator_amount = validator_amount
         self._validator_type_of_operation = validator_type_of_operation
 
-
-    def _read_raw_input(self) -> str:
-        """Метод чтения вводимых данных"""
-
-        my_new_data_in_bd = input()
-
-        return my_new_data_in_bd
-
     def is_correct_count_of_values(self, string_of_data: str, count_fields: int) -> Union[str, bool]:
         """Метод для валидации кол-ва переданных значений через пробел"""
 
@@ -67,36 +59,36 @@ class UiValidatorOfInputTransaction:
 
     
     def _get_validated_transaction(self):  # Не хорошо! Разделить на методы
-            """Метод, возвращающий отвалидированные данные"""
-    
-            print()
-            print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
-    
-            while True:
-    
-                my_new_data_in_bd = self._read_raw_input()
+        """Метод, возвращающий отвалидированные данные"""
 
-                # 1. Валидируем кол-во значений
-                expected_fields_count = 4
-                result_validation_of_count_values = self.is_correct_count_of_values(my_new_data_in_bd, expected_fields_count)
+        print()
+        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
 
-                #1.1. Если не прошли валидацию по кол-ву - заново запрашиваем ввод
-                if isinstance(result_validation_of_count_values, str):
-                    print(result_validation_of_count_values)
-                    print("Попробуйте ещё раз ввести данные.", end="\n\n")
-                    continue
+        while True:
 
-                date, amount, type_of_operation, description = self._parse_input(my_new_data_in_bd)
+            my_new_data_in_bd = input()
 
-                list_of_result_validations = self._validate_all_fields(date, amount, type_of_operation)
+            # 1. Валидируем кол-во значений
+            expected_fields_count = 4
+            result_validation_of_count_values = self.is_correct_count_of_values(my_new_data_in_bd, expected_fields_count)
 
-                # Если все результаты валидаций принадлежат типу bool - то True, иначе (типу str), то False
-                if all([isinstance(result, bool) for result in list_of_result_validations]):
-                    return (date, amount, type_of_operation, description)  # Возвращаем данные в случае успешной проверки
- 
-                print(*[i for i in list_of_result_validations if isinstance(i, str)], sep="\n\n")  # Иначе пишем найденные ошибки
-                print()
+            #1.1. Если не прошли валидацию по кол-ву - заново запрашиваем ввод
+            if isinstance(result_validation_of_count_values, str):
+                print(result_validation_of_count_values)
                 print("Попробуйте ещё раз ввести данные.", end="\n\n")
+                continue
+
+            date, amount, type_of_operation, description = self._parse_input(my_new_data_in_bd)
+
+            list_of_result_validations = self._validate_all_fields(date, amount, type_of_operation)
+
+            # Если все результаты валидаций принадлежат типу bool - то True, иначе (типу str), то False
+            if all([isinstance(result, bool) for result in list_of_result_validations]):
+                return (date, amount, type_of_operation, description)  # Возвращаем данные в случае успешной проверки
+
+            print(*[i for i in list_of_result_validations if isinstance(i, str)], sep="\n\n")  # Иначе пишем найденные ошибки
+            print()
+            print("Попробуйте ещё раз ввести данные.", end="\n\n")
 
 
 class UiValidatorOfInputId:
@@ -106,15 +98,6 @@ class UiValidatorOfInputId:
         # Внешние зависимости (объекты классов других файлов)
         self.read_service = read_service
         self.validator_id = validator_id
-
-    def _validate_format(self, id_str) -> Union[str, bool]:
-        """Метод, валидирующий формат id"""
-
-        return self.validator_id.is_correct_id(id_str)
-
-    def _check_exist_id(self, id: str):
-        """Метод проверяет существование id"""
-        return self.read_service.get_data_by_id(int(id))[0]
 
     def _get_validated_id(self, prompt) -> int:
         """Метод валидации вводимого id при изменении, удалении записи.
@@ -126,7 +109,7 @@ class UiValidatorOfInputId:
             
             input_id_by_user = input()
 
-            result_of_id_validation = self._validate_format(input_id_by_user)
+            result_of_id_validation = self.validator_id.is_correct_id(input_id_by_user)
 
             # Валидация на уровне core
             if isinstance(result_of_id_validation, str):
@@ -134,7 +117,7 @@ class UiValidatorOfInputId:
                 continue
 
             # Валидация на уровне сервиса. Берём только 0-й индекс, поскольку нам нужно только bool - значение
-            if not (self._check_exist_id(input_id_by_user)):
+            if not (self.read_service.get_data_by_id(int(input_id_by_user))[0]):
                 print()
                 print(f"Запись с {int(input_id_by_user)} не найдена в базе !!! Попробуйте ещё раз.", end="\n\n")
 
