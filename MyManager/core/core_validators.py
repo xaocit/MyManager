@@ -4,6 +4,13 @@ from typing import Union
 import re
 from datetime import datetime
 
+from MyManager.exeptions.exceptions_of_core import (
+    InvalidInputIdError,
+    InvalidInputDateError,
+    InvalidInputAmountError,
+    InvalidInputTypeOfOperationError
+)
+
 
 class ValidateId:
     """Класс для валидации id"""
@@ -11,13 +18,11 @@ class ValidateId:
     @staticmethod
     def is_correct_id(id: str) -> Union[str, bool]:
 
-        if id.isdigit():
-            if int(id) >= 0:
-                return True
-            
-            return "Ошибка! Id должен быть >= 0 !!!"
-        
-        return "Ошибка! Id должен быть числом !!!"
+        if not id.isdigit():
+            raise InvalidInputIdError(id, "Id должен быть числом !!!")
+
+        if int(id) < 0:
+            raise InvalidInputIdError(id, "Id должен быть > 0 !!!")
 
 
 class ValidateDate:
@@ -28,15 +33,13 @@ class ValidateDate:
 
         format_of_date = r'\d{2}\.\d{2}\.\d{4}'
         if not bool(re.match(format_of_date, new_date)):
-            return "Ошибка! Неверный формат введённой даты !!!"
+            raise InvalidInputDateError(new_date, "Неверный формат введённой даты !!!")
 
         try:
             datetime.strptime(new_date, "%d.%m.%Y")
             
         except ValueError:
-            return f"Ошибка! Такой даты не существует !!!"
-
-        return True
+            raise InvalidInputDateError(new_date, "Несуществующая дата !!!")
 
 
 class ValidateAmount:
@@ -49,12 +52,11 @@ class ValidateAmount:
             value = float(new_amount)
 
         except ValueError:
-            return "Ошибка! Сумма должна быть числом !!!"
+            raise InvalidInputAmountError(new_amount, "Сумма должна быть числом !!!")
 
         if value <= 0:
-            return "Ошибка! Сумма должна быть положительной !!!"
+            raise InvalidInputAmountError(new_amount, "Сумма должна быть >= 0 !!!")
 
-        return True
 
 class ValidateTypeOfOperation:
     """Класс, реализующий методы по валидации типа операции"""
@@ -62,7 +64,5 @@ class ValidateTypeOfOperation:
     @staticmethod
     def is_correct_type_of_operation(new_operation: str) -> Union[str, bool]:
 
-        if new_operation in ("expense", "income"):
-            return True
-
-        return "Ошибка! Тип операции должен быть 'expense' или 'income' !!!"
+        if not new_operation in ("expense", "income"):
+            raise InvalidInputTypeOfOperationError(new_operation, "Тип операции должен быть 'expense' или 'income' !!!")

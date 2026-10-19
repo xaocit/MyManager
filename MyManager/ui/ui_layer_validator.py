@@ -2,6 +2,8 @@
 
 from typing import Union
 
+from MyManager.exeptions.exceptions_of_core import BaseAppError
+
 from MyManager.core.core_validators import (
     ValidateId,
     ValidateDate,
@@ -40,31 +42,14 @@ class UiValidatorOfInputTransaction:
         """Метод разбиения строки на поля данных"""
 
         return raw.split(None, 3)
-
-    def _validate_all_fields(self, date, amount, type_of_operation) -> list[Union[str, bool]]:
-        """Метод валидации отпарсенных данных"""
-
-        result_validation_of_date = self._validator_date.is_correct_date(date)
-        result_validation_of_amount = self._validator_amount.is_correct_amount(amount)
-        result_validation_of_type_of_operation = self._validator_type_of_operation.is_correct_type_of_operation(type_of_operation)
-
-        # Формируем список с валидациями
-        list_of_result_validations = [
-            result_validation_of_date,
-            result_validation_of_amount,
-            result_validation_of_type_of_operation
-        ]
-
-        return list_of_result_validations
-
     
     def _get_validated_transaction(self):  # Не хорошо! Разделить на методы
         """Метод, возвращающий отвалидированные данные"""
 
-        print()
-        print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
-
         while True:
+
+            print()
+            print("Введите строку с новыми данными через пробелы (например: 24.05.2024 600 income Вознаграждение за мойку посуды): ")
 
             my_new_data_in_bd = input()
 
@@ -80,15 +65,21 @@ class UiValidatorOfInputTransaction:
 
             date, amount, type_of_operation, description = self._parse_input(my_new_data_in_bd)
 
-            list_of_result_validations = self._validate_all_fields(date, amount, type_of_operation)
+            try: 
 
-            # Если все результаты валидаций принадлежат типу bool - то True, иначе (типу str), то False
-            if all([isinstance(result, bool) for result in list_of_result_validations]):
-                return (date, amount, type_of_operation, description)  # Возвращаем данные в случае успешной проверки
+                self._validator_date.is_correct_date(date)
+                self._validator_amount.is_correct_amount(amount)
+                self._validator_type_of_operation.is_correct_type_of_operation(type_of_operation)
 
-            print(*[i for i in list_of_result_validations if isinstance(i, str)], sep="\n\n")  # Иначе пишем найденные ошибки
-            print()
-            print("Попробуйте ещё раз ввести данные.", end="\n\n")
+            except BaseAppError as e:
+                print(f"Ошибка! {e}", sep="\n\n")  # Иначе пишем найденные ошибки
+                print()
+                print("Попробуйте ещё раз ввести данные.", end="\n\n")
+                continue
+
+            else:
+                return (date, amount, type_of_operation)
+            
 
 
 class UiValidatorOfInputId:
@@ -109,12 +100,12 @@ class UiValidatorOfInputId:
             
             input_id_by_user = input()
 
-            result_of_id_validation = self.validator_id.is_correct_id(input_id_by_user)
+            #Валидация на уровне core
+            try:
+                self.validator_id.is_correct_id(input_id_by_user)
 
-            # Валидация на уровне core
-            if isinstance(result_of_id_validation, str):
-                print(result_of_id_validation, end="\n\n")
-                continue
+            except BaseAppError as e:
+                print(f"Ошибка! {e}")
 
             # Валидация на уровне сервиса. Берём только 0-й индекс, поскольку нам нужно только bool - значение
             if not (self.read_service.get_data_by_id(int(input_id_by_user))[0]):
