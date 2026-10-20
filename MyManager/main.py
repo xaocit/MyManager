@@ -2,6 +2,9 @@
 
 import sys
 
+from MyManager.exeptions.exceptions_of_data_manager import LoadSaveDataBaseError
+
+
 from MyManager.ui.ui_service import ExitApp
 
 from MyManager.composition_build import build
@@ -16,6 +19,9 @@ def main():
     try:
         execute_app = build(data_file_path=DATA_FILE_PATH)
         execute_app.stream_program()
+
+    except LoadSaveDataBaseError as e:
+        print(f"Ошибка работы с базой данных: {e}")
 
     except ExitApp:
         pass

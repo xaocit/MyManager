@@ -3,6 +3,11 @@
 from typing import List, Optional
 from datetime import datetime
 
+from MyManager.exeptions.exceptions_of_data_manager import (
+    DecoderDataBaseError,
+    FileWithDataBaseFoundError,
+    SaveDataBaseError
+)
 
 from MyManager.core.entities import StructDataOfTransaction
 

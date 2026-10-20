@@ -3,9 +3,15 @@
 
 # Импорты
 
+import logging
 import json, pathlib
 from typing import List
 
+from MyManager.exeptions.exceptions_of_data_manager import (
+    DecoderDataBaseError,
+    FileWithDataBaseFoundError,
+    SaveDataBaseError
+)
 
 from MyManager.core.entities import StructDataOfTransaction
 
@@ -15,6 +21,9 @@ from MyManager.infrastructure.interfaces import IDataFormatter
 
 
 # Конец импортов
+
+# Создаём логгер для этого модуля
+logger = logging.getLogger(__name__)
 
 class JsonFormatter(IDataFormatter):
     """Класс форматирования списка из вида python в вид, характерный для .json - файла, и наоборот"""
@@ -70,29 +79,29 @@ class JsonRepository(IRepository):
         """Этот метод читает файлик бд и возвращает выгруженные транзакции в виде списка"""
 
         try:
-            # Проверка наличия файла
-            if not self.file_path.exists():
-                print(f"!!! Файл {self.file_path} не найден. Создание нового..")
-                return []
-
             with open(self.file_path, 'r', encoding="utf-8") as file:
                 data = json.load(file)
 
-            # Преобразуем JSON в список транзакций
-            return self.formatter.from_dict(data)
+        # Исключения при ошибке расшифровки данных json
+        except json.JSONDecodeError as e:
+            logger.exception("Ошибка парсинга данных JSON")
+            raise DecoderDataBaseError(e) from e
 
-        ## Какие-то исключения
-        except Exception as e:
-            print(f"Ошибка! Загрузка базы данных не удалась: {e}")
-            raise  # ✅ Всегда возвращаем список
+        except FileNotFoundError as e:
+            logger.exception(f"Файл с базой данных не найден по пути: {self.file_path}")
+            raise FileWithDataBaseFoundError(self.file_path) from e
+
+        else:
+            # Преобразуем json-данные в список транзакций
+            return self.formatter.from_dict(data)
 
     def save_all(self, transactions: List[StructDataOfTransaction]) -> None:
         """Сохранение транзакций в JSON файле"""
 
+        # Преобразуем транзакции в словарь
+        data = self.formatter.to_dict(transactions)
+        
         try:
-            # Преобразуем транзакции в словарь
-            data = self.formatter.to_dict(transactions)
-
             # Записываем словарик в файл
             with open(self.file_path, 'w', encoding='utf-8') as file:
                 json.dump(
@@ -103,6 +112,12 @@ class JsonRepository(IRepository):
                     sort_keys=False      # Без сортировки ключей
                 )
 
-        except Exception as e:
-            print(f"Ошибка! Файл не сохранён по причине: {e}")
-            raise
+        # 1. Ошибка прав доступа (например, файл защищен от записи или открыт другой программой)
+        except PermissionError as e:
+            logger.exception(f"Нет прав на запись в файл по пути: {self.file_path}")
+            raise SaveDataBaseError("Недостаточно прав для сохранения файла базы данных.") from e
+
+        # 2. Ошибка ОС (например, закончилось место на диске, не существует указанная папка)
+        except OSError as e:
+            logger.exception(f"Системная ошибка ввода-вывода при сохранении в {self.file_path}")
+            raise SaveDataBaseError(f"Ошибка операционной системы при сохранении данных: {e.strerror}") from e

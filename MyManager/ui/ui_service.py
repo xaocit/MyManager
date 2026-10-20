@@ -1,6 +1,11 @@
 ### Главная логика действий для UI, в которой собираются прочие модули этого слоя
 
 import sys
+
+from MyManager.exeptions.base import (
+    BaseAppError
+)
+
 from MyManager.services.interfaces import ITransactionReadService
 
 from .ui_output_data_modules.ui_output_custom_data import TransactionsOutputUI
@@ -122,7 +127,7 @@ class MenuActions:
         """Действие: Показ в прямом порядке"""
 
         data = self.read_service.get_all(reverse=True)
-        
+    
         self.display_data_methods.display_transactions(data)
 
     def _menu_main(self):
@@ -171,14 +176,11 @@ class MenuActions:
         mas_for_sorting = list(map(int, input().split()))
         print()
 
-        if self.read_service.get_all() != []:
-            result = self.read_service.get_sorted(mas_for_sorting)
+        result = self.read_service.get_sorted(mas_for_sorting)
 
-            self.display_data_methods.display_transactions(result)
+        self.display_data_methods.display_transactions(result)
 
-        # Если файлик пуст, то не выполняем сортировку
-        else:
-            print("НЕТ ДАННЫХ В ФАЙЛЕ ДЛЯ СОРТИРОВКИ!!!")
+
 
 
 class ExitApp(Exception):

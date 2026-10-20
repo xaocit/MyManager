@@ -65,8 +65,7 @@ class UiValidatorOfInputTransaction:
 
             date, amount, type_of_operation, description = self._parse_input(my_new_data_in_bd)
 
-            try: 
-
+            try:
                 self._validator_date.is_correct_date(date)
                 self._validator_amount.is_correct_amount(amount)
                 self._validator_type_of_operation.is_correct_type_of_operation(type_of_operation)
