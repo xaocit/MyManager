@@ -126,14 +126,16 @@ class UiValidatorOfMenuChoice:
             try:
                 user_choice = int(input("Сделайте выбор: "))
 
-                if min_value <= user_choice <= max_value:
-                    return user_choice
-
-                else:
-                    print()
-                    print(f"Введите значение с {min_value} до {max_value} !!!", end="\n\n")
-                    continue
-
             except ValueError:
                 print()
                 print("Введите число !!!", end="\n\n")
+                continue
+                
+            if min_value <= user_choice <= max_value:
+                return user_choice
+
+            else:
+                print()
+                print(f"Введите значение с {min_value} до {max_value} !!!", end="\n\n")
+                continue
+
