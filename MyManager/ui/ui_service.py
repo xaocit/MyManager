@@ -3,7 +3,7 @@
 import sys
 
 from MyManager.exeptions.base import (
-    BaseAppError
+    ExitApp
 )
 
 from MyManager.services.interfaces import ITransactionReadService
@@ -57,8 +57,6 @@ class GeneralUi:
 
             else:  ## Если нет - просто оставляем тек. меню
                 current_menu = previos_menu
-
-
 
 class MenuRegistry:
     """Класс, хранящий словарь вида: {имя_меню: {выбор: следующий_метод}}"""
@@ -181,10 +179,6 @@ class MenuActions:
         self.display_data_methods.display_transactions(result)
 
 
-
-
-class ExitApp(Exception):
-    """Сигнал завершения приложения"""
 
 class QuitApp:
     """Класс, реализующий методы по закрытию приложения"""
